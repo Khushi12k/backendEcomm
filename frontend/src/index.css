@@ -1,0 +1,172 @@
+/* ===== General Reset ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.3s ease;
+}
+
+html, body {
+  height: 100%;
+  background: linear-gradient(120deg, #f5f5f5, #e0e0e0);
+  display: flex;
+  flex-direction: column;
+  color: #333;
+}
+
+/* ===== Header ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #0d6efd;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header .logo h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+}
+
+.header .list a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  position: relative;
+}
+
+.header .list a:hover {
+  color: #ffd700;
+}
+
+/* ===== Footer ===== */
+.footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 40px 20px;
+  background: #222;
+  color: #eee;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.footer div p:hover {
+  color: #0d6efd;
+}
+
+/* ========================================================== */
+/* ========== USER FORMS: Login, Register, Form, Add ========== */
+/* ========================================================== */
+
+.login-box,
+.register-box,
+.form-box {
+  width: 400px;
+  max-width: 90%;
+  margin: 60px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  animation: fadeIn 0.8s ease forwards;
+  opacity: 0;
+}
+
+h1, h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #0d6efd;
+  animation: slideDown 0.6s ease forwards;
+  opacity: 0;
+}
+
+form .form-group {
+  margin-bottom: 20px;
+}
+
+form input,
+form textarea,
+form select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+/* ========================================================== */
+/* =============== ADMIN PAGES (SMALL CENTER FORM) =========== */
+/* ========================================================== */
+
+/* Make whole admin pages centered */
+body.admin-login-page,
+body.admin-addproduct-page {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ⭐ Admin Login Box */
+.admin-login-box {
+  width: 350px !important;
+  max-width: 90%;
+  padding: 40px 30px;
+  margin: auto;
+  background: #1a1a1a;
+  color: #f1f1f1;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  animation: fadeIn 0.8s ease forwards;
+  opacity: 0;
+}
+
+/* ⭐ Admin Add Product Form */
+.admin-add-form {
+  width: 380px !important;
+  max-width: 95%;
+  padding: 30px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: fadeIn 0.8s ease forwards;
+  opacity: 0;
+}
+
+.admin-add-form h1 {
+  color: #0d6efd;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* ========================================================== */
+/* =============== BUTTONS & LINKS =========================== */
+/* ========================================================== */
+
+form button {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(90deg, #0d6efd, #0056b3);
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ===== Animations ===== */
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
