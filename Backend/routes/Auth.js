@@ -9,3 +9,5 @@ authRouter.post("/register", registerUser)
 authRouter.delete("/:id", deleteUsers)
 authRouter.put("/:id", updateUsers)
 export default authRouter
+
+

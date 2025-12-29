@@ -21,7 +21,6 @@ export async function registerUser(req, res) {
     try {
         const data = req.body;
 
-        //  Check if user already exists
         const existEmail = await Auth.findOne({ email: data.email });
         if (existEmail) {
             return res.status(400).json({ message: "Email already exists" });
@@ -36,7 +35,6 @@ export async function registerUser(req, res) {
 
         // };
 
-        //  Password Hashing
         const hashedPassword = await bcrypt.hash(data.password, 10);
         data.password = hashedPassword;
         const newUser = new Auth(data);
@@ -76,8 +74,8 @@ export async function loginUsers(req, res) {
         res.cookie("auth_token", auth_token, {
             httpOnly: true,
             secure: true,
-            sameSite: "none",
-            maxAge: 3600,
+            sameSite: "lax",
+            maxAge: 3600*1000,
         })
 
 
@@ -143,3 +141,5 @@ export async function updateUsers(req, res) {
     }
 
 }
+
+

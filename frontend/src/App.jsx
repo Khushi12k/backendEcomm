@@ -8,6 +8,9 @@ import AdminHome from "./admin/pages/Home";
 import AdminLogin from "./admin/pages/Login";
 import AddProduct from "./admin/pages/AddProduct";
 import ProtectedRouters from "./admin/components/ProtectedRouters.jsx";
+import SingleProduct from "./pages/SingleProduct.jsx";
+import Cart from "./pages/Cart.jsx";
+
 
 const router = createBrowserRouter([
   {
@@ -16,13 +19,14 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
+      { path: "/cart",element: <Cart />},
       { path: "register", element: <Register /> },
-
-      // { path: "AdminLogin", element: <AdminLogin /> },
+     { path: "product/:slug", element: <SingleProduct /> },
+    
       { path: "admin/login", element: <AdminLogin /> },
 
       { path: "admin/home", element: <AdminHome /> },
-
+    
       {
         path: "admin/AddProduct",
         element: <AddProduct />
@@ -49,3 +53,7 @@ function App() {
 }
 
 export default App;
+
+
+
+

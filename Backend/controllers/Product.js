@@ -2,17 +2,35 @@ import Product from "../models/Productmodel.js"
 import multer from "multer";
 
 
+// export async function addProduct(req, res) {
+//     try {
+//         const newRecord = req.body;
+//         newRecord.image = req.file.path.replace(/\\/g, "/");
+//         const newProduct = new Product(newRecord);
+//         await newProduct.save();
+//         return res.status(201).json(newProduct);
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// }
+
+
+
 export async function addProduct(req, res) {
-    try {
-        const newRecord = req.body;
-        newRecord.image = req.file.path;
-        const newProduct = new Product(newRecord);
-        await newProduct.save();
-        return res.status(201).json(newProduct);
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
+  try {
+    const newRecord = req.body;
+    if (req.file) {
+      // Save path relative to /uploads for frontend
+      newRecord.image = `uploads/${req.file.filename}`;
     }
+    const newProduct = new Product(newRecord);
+    await newProduct.save();
+    return res.status(201).json(newProduct);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 }
+
 
 
 export async function getProduct(req, res) {
@@ -86,3 +104,14 @@ export async function checkSlug(req,res){
     return  res.status(500).json({message:error.message});
   }
 };
+
+export const getProductBySlug = async (req, res) => {
+  try {
+    const product = await Product.findOne({ slug: req.params.slug });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
