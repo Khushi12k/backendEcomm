@@ -44,7 +44,7 @@ function AddProduct() {
 
     try {
       const res = await axios.get(
-        `http://localhost:3000/product/checkSlug/${slug}`
+        `${import.meta.env.VITE_BASEURL}/product/check-slug/${slug}`
       );
 
 
@@ -74,7 +74,7 @@ function AddProduct() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/product",
+        `${import.meta.env.VITE_BASEURL}/admin/product/add`,
         product,
         { withCredentials: true }
       );

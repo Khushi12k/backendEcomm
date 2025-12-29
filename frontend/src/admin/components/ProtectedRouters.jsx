@@ -12,7 +12,7 @@ function ProtectedRouters({ children }) {
 
     async function checkForlogin() {
         const response = await axios.get(
-            "http://localhost:3000/check/login?referer=admin",
+            `${import.meta.env.VITE_BASEURL}/check/login?referer=admin`,
             { withCredentials: true })
 
         console.log(response)

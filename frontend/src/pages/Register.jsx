@@ -26,7 +26,7 @@ function Register() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/user/register",
+        `${import.meta.env.VITE_BASEURL}/user/register`,
         data
       );
 
