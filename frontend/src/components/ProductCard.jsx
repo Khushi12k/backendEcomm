@@ -68,7 +68,12 @@ const trimContent = (text, maxLength = 30) => {
 function ProductCard({ product }) {
   const { addToCart } = useCart();
 
-  function handleAddToCart() {
+  // SAFETY CHECK
+  if (!product) return null;
+
+  function handleAddToCart(e) {
+    e.preventDefault(); // link click interfere na kare
+    console.log("ADD TO CART CLICKED:", product); // DEBUG
     addToCart(product);
   }
 
@@ -76,7 +81,7 @@ function ProductCard({ product }) {
     <div className="productCard">
       {/* Product Image */}
       <div className="productImage">
-        <Link to={"/product/" + product.slug}>
+        <Link to={`/product/${product.slug}`}>
           <img
             src={`${import.meta.env.VITE_BASEURL}/${product.image}`}
             alt={product.name}
@@ -87,13 +92,13 @@ function ProductCard({ product }) {
       <div className="content">
         {/* Product Name */}
         <h3>
-          <Link to={"/product/" + product.slug}>
+          <Link to={`/product/${product.slug}`}>
             {trimContent(product.name, 22)}
           </Link>
         </h3>
 
         {/* Price */}
-        <p>
+        <p className="price">
           <PiCurrencyInrLight />
           {product.discountedPrice ? (
             <>
@@ -106,7 +111,11 @@ function ProductCard({ product }) {
         </p>
 
         {/* Add to Cart Button */}
-        <button className="addToCartBtn" onClick={handleAddToCart}>
+        <button
+          type="button"
+          className="addToCartBtn"
+          onClick={handleAddToCart}
+        >
           Add to Cart
         </button>
       </div>
