@@ -69,6 +69,8 @@ import Cart from "./pages/Cart.jsx";
 import AuthProvider from "./contexts/AuthProvider.jsx";
 import { CartProvider } from "./contexts/CartProvider.jsx";
 
+import Header from "./components/Header.jsx"; // ✅ import header
+
 import AdminHome from "./admin/pages/Home.jsx";
 import AdminLogin from "./admin/pages/Login.jsx";
 import AddProduct from "./admin/pages/AddProduct.jsx";
@@ -104,6 +106,7 @@ function App() {
   return (
     <AuthProvider>
       <CartProvider>
+        <Header /> {/* ✅ top-level header */}
         <RouterProvider router={router} />
       </CartProvider>
     </AuthProvider>

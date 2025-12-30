@@ -73,7 +73,7 @@ function ProductCard({ product }) {
   function handleAddToCart(e) {
     e.preventDefault();
     addToCart(product);
-    alert("Product added successfully!"); // ✅ alert added
+    alert("Product added successfully!");
   }
 
   return (
