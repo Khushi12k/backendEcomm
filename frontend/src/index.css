@@ -7,8 +7,7 @@
   transition: all 0.3s ease;
 }
 
-html,
-body {
+html, body {
   height: 100%;
   background: linear-gradient(120deg, #f5f5f5, #e0e0e0);
   display: flex;
@@ -24,36 +23,32 @@ body {
   padding: 15px 4rem;
   background: #0d6efd;
   color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .header .logo h1 {
-  margin: 0;
   font-size: 1.8rem;
   letter-spacing: 1px;
 }
+
 .header .logo h1 a {
   text-decoration: none;
   color: white;
 }
 
-.header .list a {
+.header .list a, .header .list span {
+  font-weight: bold;
+  margin-left: 20px;
+  cursor: pointer;
   text-decoration: none;
   color: white;
   position: relative;
 }
-.header .list span,
-.header .list a {
-  font-weight: bold;
-  margin-left: 20px;
-  cursor: pointer;
-}
 
-.header .list a:hover,
-.header .list span:hover {
+.header .list a:hover, .header .list span:hover {
   color: #ffd700;
 }
 
@@ -72,26 +67,20 @@ body {
   color: #0d6efd;
 }
 
-/* ========================================================== */
-/* ========== USER FORMS: Login, Register, Form, Add ========== */
-/* ========================================================== */
-
-.login-box,
-.register-box,
-.form-box {
+/* ===== User Forms ===== */
+.login-box, .register-box, .form-box {
   width: 400px;
   max-width: 90%;
   margin: 60px auto;
   padding: 30px;
   background: #fff;
   border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
   animation: fadeIn 0.8s ease forwards;
   opacity: 0;
 }
 
-h1,
-h2 {
+h1, h2 {
   text-align: center;
   margin-bottom: 25px;
   color: #0d6efd;
@@ -103,51 +92,39 @@ form .form-group {
   margin-bottom: 20px;
 }
 
-form input,
-form textarea,
-form select {
+form input, form textarea, form select {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ccc;
   border-radius: 10px;
 }
 
-/* ========================================================== */
-/* =============== ADMIN PAGES (SMALL CENTER FORM) =========== */
-/* ========================================================== */
-
-body.admin-login-page,
-body.admin-addproduct-page {
+/* ===== Admin Pages ===== */
+body.admin-login-page, body.admin-addproduct-page {
   display: flex !important;
   justify-content: center;
   align-items: center;
 }
 
-/* ⭐ Admin Login Box */
 .admin-login-box {
-  width: 350px !important;
+  width: 350px;
   max-width: 90%;
   padding: 40px 30px;
-  margin: auto;
   background: #1a1a1a;
   color: #f1f1f1;
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   animation: fadeIn 0.8s ease forwards;
-  opacity: 0;
 }
 
-/* ⭐ Admin Add Product Form */
 .admin-add-form {
-  width: 380px !important;
+  width: 380px;
   max-width: 95%;
   padding: 30px;
-  margin: auto;
-  background: #ffffff;
+  background: #fff;
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   animation: fadeIn 0.8s ease forwards;
-  opacity: 0;
 }
 
 .admin-add-form h1 {
@@ -156,51 +133,44 @@ body.admin-addproduct-page {
   text-align: center;
 }
 
-/* ========================================================== */
-/* =============== BUTTONS & LINKS =========================== */
-/* ========================================================== */
-
-form button {
+/* ===== Buttons ===== */
+form button, .addToCartBtn, .single-product-details .add-to-cart {
   width: 100%;
-  padding: 15px;
+  padding: 12px 15px;
   background: linear-gradient(90deg, #0d6efd, #0056b3);
   border: none;
   color: #fff;
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+form button:hover, .addToCartBtn:hover, .single-product-details .add-to-cart:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+  background: linear-gradient(90deg, #0056b3, #003f7f);
 }
 
 /* ===== Animations ===== */
 @keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
+  to { opacity: 1; }
 }
 
 @keyframes slideDown {
-  0% {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
 }
 
-/* ========================================================== */
-/* ==================== PRODUCT CARD ======================== */
-/* ========================================================== */
-
+/* ===== Product Cards ===== */
 .productsContainer {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  justify-content: flex-start;
+  gap: 20px;
+  justify-content: center;
   padding: 20px;
   margin-top: 30px;
-  transition: all 0.3s ease;
 }
 
 .productCard {
@@ -209,16 +179,15 @@ form button {
   width: 260px;
   background-color: #fff;
   border-radius: 16px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
   cursor: pointer;
-  position: relative;
 }
 
 .productCard:hover {
   transform: translateY(-10px) scale(1.03);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
   filter: brightness(1.05);
 }
 
@@ -227,16 +196,13 @@ form button {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  transition: transform 0.3s ease;
 }
 
 .productCard h3 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
-  margin: 0;
   text-align: center;
-  transition: color 0.3s ease;
+  color: #333;
 }
 
 .productCard p {
@@ -246,55 +212,10 @@ form button {
   gap: 6px;
   font-size: 1rem;
   color: #444;
-  transition: color 0.3s ease;
 }
 
-.productCard p del {
-  color: #999;
-  transition: color 0.3s ease;
-}
-
-.productCard p strong {
-  color: #e60023;
-  font-weight: 700;
-}
-
-.addToCartBtn {
-  background-color: #1d3557;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 10px;
-}
-
-.addToCartBtn:hover {
-  background-color: #457b9d;
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-}
-
-@media (max-width: 768px) {
-  .productCard {
-    width: 48%;
-  }
-}
-
-@media (max-width: 480px) {
-  .productCard {
-    width: 100%;
-  }
-}
-
-.productCard h3 a {
-  text-decoration: none;
-  color: black;
-  font-weight: bold;
-}
+.productCard p del { color: #999; }
+.productCard p strong { color: #e60023; font-weight: 700; }
 
 .productImage {
   width: 100%;
@@ -316,9 +237,9 @@ form button {
   filter: brightness(1.05);
 }
 
-/* SingleProduct.css */
+.productCard h3 a { text-decoration: none; color: #333; font-weight: bold; }
 
-/* Container */
+/* ===== Single Product ===== */
 .single-product {
   display: flex;
   flex-wrap: wrap;
@@ -326,10 +247,8 @@ form button {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Image section */
 .single-product-image {
   flex: 1 1 400px;
   display: flex;
@@ -341,116 +260,37 @@ form button {
   max-width: 100%;
   height: auto;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   transition: transform 0.3s ease;
 }
 
-.single-product-image img:hover {
-  transform: scale(1.05);
-}
+.single-product-image img:hover { transform: scale(1.05); }
 
-/* Details section */
 .single-product-details {
   flex: 1 1 400px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  gap: 1rem;
 }
 
-/* Product name */
-.single-product-details h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
+.single-product-details h1 { font-size: 2rem; color: #333; }
+.single-product-details .category { font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+.single-product-details .price { font-size: 1.5rem; color: #333; display: flex; align-items: center; gap: 0.5rem; }
+.single-product-details .price del { color: #aaa; }
+.single-product-details .description { font-size: 1rem; line-height: 1.6; color: #555; }
 
-/* Category */
-.single-product-details .category {
-  font-size: 0.9rem;
-  color: #888;
-  margin-bottom: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Price */
-.single-product-details .price {
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.single-product-details .price del {
-  margin-right: 0.5rem;
-  color: #aaa;
-}
-
-/* Description */
-.single-product-details .description {
-  font-size: 1rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
-  color: #555;
-}
-
-/* Add to cart button */
-.single-product-details .add-to-cart {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.single-product-details .add-to-cart:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .single-product {
-    flex-direction: column;
-    padding: 1rem;
-  }
-
-  .single-product-image,
-  .single-product-details {
-    flex: 1 1 100%;
-  }
-
-  .single-product-details h1 {
-    font-size: 1.7rem;
-  }
-
-  .single-product-details .price {
-    font-size: 1.3rem;
-  }
-}
-
-.cart-link {
-  position: relative;
-  display: inline-block;
-}
-
+/* ===== Cart Styles ===== */
+.cart-link { position: relative; display: inline-block; }
 .cart-badge {
   position: absolute;
   top: -8px;
   right: -8px;
   background: red;
-  color: white;
+  color: #fff;
   font-size: 12px;
   padding: 2px 6px;
   border-radius: 50%;
 }
-
-
 
 .cart-container {
   max-width: 900px;
@@ -471,6 +311,7 @@ form button {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background: #fff;
+  align-items: center;
 }
 
 .cart-item img {
@@ -484,18 +325,8 @@ form button {
   flex: 1;
 }
 
-.cart-item-details h2 {
-  font-size: 18px;
-  margin-bottom: 8px;
-}
-
-.cart-item-details p {
-  font-size: 16px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
+.cart-item-details h2 { font-size: 18px; margin-bottom: 8px; }
+.cart-item-details p { font-size: 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 4px; }
 
 .quantity-controls {
   display: flex;
@@ -505,63 +336,56 @@ form button {
 }
 
 .quantity-controls button {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border: none;
   background: #333;
   color: #fff;
   font-size: 18px;
   cursor: pointer;
   border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
-.quantity-controls span {
-  font-size: 16px;
-  font-weight: bold;
-}
+.quantity-controls button:hover { background: #555; }
+
+.quantity-controls span { font-size: 16px; font-weight: bold; }
 
 .remove-btn {
   background: #e53935;
   color: #fff;
   border: none;
-  padding: 6px 10px;
+  padding: 6px 12px;
   cursor: pointer;
   border-radius: 4px;
   display: flex;
   align-items: center;
   gap: 5px;
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .remove-btn:hover {
   background: #c62828;
+  transform: translateY(-2px);
 }
 
-.cart-container h2 {
-  text-align: right;
-  margin-top: 30px;
-  font-size: 22px;
+.cart-container h2 { text-align: right; font-size: 22px; margin-top: 30px; }
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .productCard { width: 48%; }
+  .single-product { flex-direction: column; padding: 1rem; }
+  .single-product-image, .single-product-details { flex: 1 1 100%; }
+  .single-product-details h1 { font-size: 1.7rem; }
+  .single-product-details .price { font-size: 1.3rem; }
 }
 
-/* Responsive */
+@media (max-width: 480px) {
+  .productCard { width: 100%; }
+}
+
 @media (max-width: 600px) {
-  .cart-item {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .cart-item img {
-    width: 100%;
-    height: auto;
-  }
-
-  .cart-container h2 {
-    text-align: center;
-  }
+  .cart-item { flex-direction: column; align-items: center; }
+  .cart-item img { width: 100%; height: auto; }
+  .cart-container h2 { text-align: center; }
 }
-
-
-
-
-
-
-
