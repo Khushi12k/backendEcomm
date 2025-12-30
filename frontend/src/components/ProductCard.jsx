@@ -68,18 +68,16 @@ const trimContent = (text, maxLength = 30) => {
 function ProductCard({ product }) {
   const { addToCart } = useCart();
 
-  // SAFETY CHECK
   if (!product) return null;
 
   function handleAddToCart(e) {
-    e.preventDefault(); // link click interfere na kare
-    console.log("ADD TO CART CLICKED:", product); // DEBUG
+    e.preventDefault();
     addToCart(product);
+    alert("Product added successfully!"); // ✅ alert added
   }
 
   return (
     <div className="productCard">
-      {/* Product Image */}
       <div className="productImage">
         <Link to={`/product/${product.slug}`}>
           <img
@@ -90,14 +88,12 @@ function ProductCard({ product }) {
       </div>
 
       <div className="content">
-        {/* Product Name */}
         <h3>
           <Link to={`/product/${product.slug}`}>
             {trimContent(product.name, 22)}
           </Link>
         </h3>
 
-        {/* Price */}
         <p className="price">
           <PiCurrencyInrLight />
           {product.discountedPrice ? (
@@ -110,7 +106,6 @@ function ProductCard({ product }) {
           )}
         </p>
 
-        {/* Add to Cart Button */}
         <button
           type="button"
           className="addToCartBtn"

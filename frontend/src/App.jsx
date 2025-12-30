@@ -62,7 +62,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import First from "./pages/First.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
-import Register from "./pages/Register";
+import Register from "./pages/Register.jsx";
 import SingleProduct from "./pages/SingleProduct.jsx";
 import Cart from "./pages/Cart.jsx";
 
@@ -88,17 +88,16 @@ const router = createBrowserRouter([
       // Admin Routes
       { path: "admin/login", element: <AdminLogin /> },
       { path: "admin/home", element: <AdminHome /> },
-
       {
         path: "admin/product/add",
         element: (
           <ProtectedRouters>
             <AddProduct />
           </ProtectedRouters>
-        )
-      }
-    ]
-  }
+        ),
+      },
+    ],
+  },
 ]);
 
 function App() {

@@ -31,8 +31,6 @@
 
 // export const useCart = () => useContext(CartContext);
 
-
-
 import { createContext, useContext, useState } from "react";
 
 const CartContext = createContext();
@@ -41,10 +39,14 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
   const addToCart = (product) => {
-    // ✅ safety check (but block nahi karega)
     if (!product) return;
 
+    // Check if product already exists in cart
     setCartItems((prev) => {
+      const existing = prev.find(
+        (item) => item._id === product._id || item.slug === product.slug
+      );
+      if (existing) return prev; // avoid duplicate
       return [...prev, product];
     });
   };
@@ -54,7 +56,6 @@ export function CartProvider({ children }) {
       prev.filter(
         (item) =>
           item._id !== product._id &&
-          item.id !== product.id &&
           item.slug !== product.slug
       )
     );
@@ -64,9 +65,9 @@ export function CartProvider({ children }) {
     <CartContext.Provider
       value={{
         cartItems,
-        cartCount: cartItems.length, // ✅ yahi Header me show hoga
+        cartCount: cartItems.length,
         addToCart,
-        removeFromCart
+        removeFromCart,
       }}
     >
       {children}
