@@ -1,5 +1,4 @@
 import Auth from '../models/Authmodel.js';
-import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import "dotenv/config";

@@ -1,37 +1,3 @@
-// import React from 'react'
-// import { Link, useNavigate } from 'react-router-dom'
-// import { IoMdLogOut } from "react-icons/io";
-// import { FaCartPlus } from "react-icons/fa";
-
-// function Header() {
-//  const navigate = useNavigate();
-//    function handleLogout() {
-//     localStorage.removeItem("admin_token");
-//     navigate("/login");
-//   }
-
-//   return (
-//     <div className='header'>
-
-//       <div className="logo">
-//         <h1>E-commerce</h1>
-//       </div>
-
-//       <div className='list'>
-//         <Link to="/login">Login</Link>
-//         <Link to="/register">Register</Link>
-//         <Link to="/cart">Cart <FaCartPlus className='cartIcon' /></Link>
-//         <Link to="/admin/Login">Admin</Link>
-//        <span className='logoutIcon' onClick={handleLogout}><IoMdLogOut  /></span>
-
-//       </div>
-
-//     </div>
-//   )
-// }
-
-// export default Header
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoMdLogOut } from "react-icons/io";

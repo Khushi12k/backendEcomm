@@ -1,5 +1,5 @@
 import express from "express";
-import data from "./data.js";
+// import data from "./data.js";
 import connectToDB from "./db/connect.js";
 import "dotenv/config";
 

@@ -9,19 +9,16 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch cart items
   const fetchCart = async () => {
     if (!isLoggedIn) return;
     try {
-      const response = await instance.get("/cart", { withCredentials: true });
-      // Filter out items with null productId
-      const validItems = response.data.filter((item) => item.productId);
-      // Convert quantity to Number for safety
-      validItems.forEach((item) => (item.quantity = Number(item.quantity)));
+      const res = await instance.get("/cart", { withCredentials: true });
+      const validItems = res.data.filter((item) => item.productId);
+      validItems.forEach((i) => (i.quantity = Number(i.quantity)));
       setCartItems(validItems);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching cart:", error);
+    } catch (err) {
+      console.error(err);
+    } finally {
       setLoading(false);
     }
   };
@@ -30,67 +27,58 @@ const Cart = () => {
     fetchCart();
   }, [isLoggedIn]);
 
-  // Remove product from cart
+  /* ================= DELETE ================= */
   const handleRemove = async (cartItemId) => {
     try {
-      const response = await instance.delete(`/cart/remove/${cartItemId}`, {
+      await instance.delete(`/cart/remove/${cartItemId}`, {
         withCredentials: true,
       });
 
-      if (response.status === 200) {
-        setCartItems((prev) => prev.filter((item) => item._id !== cartItemId));
-      }
-    } catch (error) {
-      console.error("Error removing product:", error);
-    }
-  };
-
-  // Increase quantity
-  const handleIncrease = async (productId) => {
-    if (!productId) return;
-    try {
-      await instance.post(
-        "/cart/add",
-        { productId, quantity: 1 },
-        { withCredentials: true }
-      );
-
       setCartItems((prev) =>
-        prev.map((item) =>
-          item.productId && item.productId._id === productId
-            ? { ...item, quantity: Number(item.quantity) + 1 } // ensure number
-            : item
-        )
+        prev.filter((item) => item._id !== cartItemId)
       );
     } catch (error) {
-      console.error("Error updating quantity:", error);
+      console.error("Delete error:", error);
     }
   };
 
-  // Decrease quantity
-  const handleDecrease = async (cartItemId, productId, qty) => {
-    if (!productId) return;
-    try {
-      if (qty <= 1) {
-        handleRemove(cartItemId);
-      } else {
-        await instance.post(
-          "/cart/add",
-          { productId, quantity: -1 },
-          { withCredentials: true }
-        );
+  /* ================= INCREASE ================= */
+  const handleIncrease = async (productId) => {
+    await instance.post(
+      "/cart/add",
+      { productId, quantity: 1 },
+      { withCredentials: true }
+    );
 
-        setCartItems((prev) =>
-          prev.map((item) =>
-            item._id === cartItemId
-              ? { ...item, quantity: Number(item.quantity) - 1 } // ensure number
-              : item
-          )
-        );
-      }
-    } catch (error) {
-      console.error("Error updating quantity:", error);
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.productId._id === productId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+    );
+  };
+
+  /* ================= DECREASE ================= */
+  const handleDecrease = async (cartItemId, productId, qty) => {
+    if (qty <= 1) {
+      handleRemove(cartItemId);
+      return;
     }
+
+    await instance.post(
+      "/cart/add",
+      { productId, quantity: -1 },
+      { withCredentials: true }
+    );
+
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item._id === cartItemId
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+    );
   };
 
   if (!isLoggedIn) return <p>Please login to see your cart.</p>;
@@ -107,11 +95,14 @@ const Cart = () => {
             src={`${import.meta.env.VITE_BASEURL}/${item.productId.image}`}
             alt={item.productId.name}
           />
+
           <div className="cart-item-details">
             <h2>{item.productId.name}</h2>
+
             <p>
               <PiCurrencyInrLight />
-              {item.productId.discountedPrice || item.productId.originalPrice}
+              {item.productId.discountedPrice ||
+                item.productId.originalPrice}
             </p>
 
             <div className="quantity-controls">
@@ -122,11 +113,18 @@ const Cart = () => {
               >
                 -
               </button>
+
               <span>{item.quantity}</span>
-              <button onClick={() => handleIncrease(item.productId._id)}>+</button>
+
+              <button onClick={() => handleIncrease(item.productId._id)}>
+                +
+              </button>
             </div>
 
-            <button className="remove-btn" onClick={() => handleRemove(item._id)}>
+            <button
+              className="remove-btn"
+              onClick={() => handleRemove(item._id)}
+            >
               <AiOutlineDelete /> Remove
             </button>
           </div>
@@ -136,9 +134,10 @@ const Cart = () => {
       <h2>
         Total: <PiCurrencyInrLight />
         {cartItems.reduce(
-          (total, item) =>
-            total +
-            (item.productId.discountedPrice || item.productId.originalPrice) *
+          (sum, item) =>
+            sum +
+            (item.productId.discountedPrice ||
+              item.productId.originalPrice) *
               item.quantity,
           0
         )}
@@ -148,4 +147,3 @@ const Cart = () => {
 };
 
 export default Cart;
-

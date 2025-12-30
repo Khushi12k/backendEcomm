@@ -1,8 +1,7 @@
-
-
 import axios from 'axios';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import instance from "../../axiosConfig.js"
 
 
 function AdminLogin() {
@@ -23,8 +22,8 @@ function AdminLogin() {
         e.preventDefault();
 
         try {
-            const response = await axios.post(
-                `${import.meta.env.VITE_BASEURL}/admin/login`,
+            const response = await instance.post(
+                "/admin/login",
                 data,
                 { withCredentials: true }
             );

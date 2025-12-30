@@ -1,7 +1,6 @@
 import axios from "axios";
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-// import { checkForlogin } from "../../../../backend/middlewares/middlewaresAuth";
+import  { useEffect } from "react";
+
 
 function ProtectedRouters({ children }) {
 

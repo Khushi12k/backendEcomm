@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useState } from "react";
+import  { useState } from "react";
+import instance from "../../axiosConfig.js";
 
 function AddProduct() {
   const [data, setData] = useState({
@@ -43,8 +44,8 @@ function AddProduct() {
     if (!slug) return;
 
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/product/check-slug/${slug}`
+      const res = await instance.get(
+        `/product/check-slug/${slug}`
       );
 
 
@@ -73,8 +74,8 @@ function AddProduct() {
     });
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASEURL}/admin/product/add`,
+      const response = await instance.post(
+        `/admin/product/add`,
         product,
         { withCredentials: true }
       );

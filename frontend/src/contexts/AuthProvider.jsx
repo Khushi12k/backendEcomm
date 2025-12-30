@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import instance from "../axiosConfig";
+import instance from "../axiosConfig.js";
 
 const authContext = createContext();
 
@@ -23,7 +23,8 @@ function AuthProvider({ children }) {
       "/user/logout",
       {},
       {
-        withCredentials: true,
+        withCredentials: true
+        ,
       }
     );
     if (response.status === 200) {
