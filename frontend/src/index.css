@@ -566,34 +566,34 @@ form button {
 
 
 .cart-link {
-  position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.cart-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
 .cartIcon {
-  font-size: 22px;
+  font-size: 24px;
 }
 
 .cart-badge {
   position: absolute;
-  top: -8px;
-  right: -12px;
-  background-color: red;
-  color: white;
-  font-size: 12px;
+  top: -6px;
+  right: -8px;
+  background: red;
+  color: #fff;
+  font-size: 11px;
   font-weight: bold;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-}
-
-/* MOST IMPORTANT */
-.header,
-.list {
-  overflow: visible;
 }
