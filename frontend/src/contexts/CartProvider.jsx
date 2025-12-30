@@ -41,11 +41,12 @@ export function CartProvider({ children }) {
   const addToCart = (product) => {
     if (!product) return;
 
+    // Check if product already exists in cart
     setCartItems((prev) => {
-      const exists = prev.find(
+      const existing = prev.find(
         (item) => item._id === product._id || item.slug === product.slug
       );
-      if (exists) return prev; // avoid duplicate
+      if (existing) return prev; // avoid duplicate
       return [...prev, product];
     });
   };
@@ -53,7 +54,9 @@ export function CartProvider({ children }) {
   const removeFromCart = (product) => {
     setCartItems((prev) =>
       prev.filter(
-        (item) => item._id !== product._id && item.slug !== product.slug
+        (item) =>
+          item._id !== product._id &&
+          item.slug !== product.slug
       )
     );
   };

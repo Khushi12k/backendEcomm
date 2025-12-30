@@ -62,9 +62,7 @@ import { useCart } from "../contexts/CartProvider";
 function Header() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-  const { cartCount, cartItems } = useCart();
-
-  console.log("CART ITEMS:", cartItems, "COUNT:", cartCount); // DEBUG
+  const { cartCount } = useCart();
 
   function handleLogout() {
     localStorage.removeItem("admin_token");

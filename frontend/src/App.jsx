@@ -62,14 +62,12 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import First from "./pages/First.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
-import Register from "./pages/Register.jsx";
+import Register from "./pages/Register";
 import SingleProduct from "./pages/SingleProduct.jsx";
 import Cart from "./pages/Cart.jsx";
 
 import AuthProvider from "./contexts/AuthProvider.jsx";
 import { CartProvider } from "./contexts/CartProvider.jsx";
-
-import Header from "./components/Header.jsx"; // ✅ import header
 
 import AdminHome from "./admin/pages/Home.jsx";
 import AdminLogin from "./admin/pages/Login.jsx";
@@ -90,23 +88,23 @@ const router = createBrowserRouter([
       // Admin Routes
       { path: "admin/login", element: <AdminLogin /> },
       { path: "admin/home", element: <AdminHome /> },
+
       {
         path: "admin/product/add",
         element: (
           <ProtectedRouters>
             <AddProduct />
           </ProtectedRouters>
-        ),
-      },
-    ],
-  },
+        )
+      }
+    ]
+  }
 ]);
 
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <Header /> {/* ✅ top-level header */}
         <RouterProvider router={router} />
       </CartProvider>
     </AuthProvider>
