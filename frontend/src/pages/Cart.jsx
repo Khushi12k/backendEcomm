@@ -175,20 +175,31 @@ const Cart = () => {
   const { cartItems, setCartItems } = useCart();
   const [loading, setLoading] = useState(true);
 
+  // 🔹 Fetch Cart
   const fetchCart = async () => {
-    if (!isLoggedIn) return;
-    setLoading(true);
+    if (!isLoggedIn) {
+      setCartItems([]);
+      setLoading(false);
+      return;
+    }
 
     try {
-      const res = await instance.get("/cart", { withCredentials: true });
+      const res = await instance.get("/cart", {
+        withCredentials: true,
+      });
+
       const cartArray = Array.isArray(res.data)
         ? res.data
         : res.data.cart || [];
 
-      const validItems = cartArray.filter((item) => item.productId);
-      validItems.forEach((i) => (i.quantity = Number(i.quantity)));
+      const validItems = cartArray
+        .filter((item) => item.productId)
+        .map((item) => ({
+          ...item,
+          quantity: Number(item.quantity),
+        }));
 
-      setCartItems(validItems);
+      setCartItems(validItems); // ✅ HEADER COUNT UPDATE
     } catch (err) {
       console.error("Fetch cart error:", err);
       setCartItems([]);
@@ -201,17 +212,22 @@ const Cart = () => {
     fetchCart();
   }, [isLoggedIn]);
 
+  // 🔹 Remove Item
   const handleRemove = async (cartItemId) => {
     try {
       await instance.delete(`/cart/remove/${cartItemId}`, {
         withCredentials: true,
       });
-      setCartItems((prev) => prev.filter((i) => i._id !== cartItemId));
+
+      setCartItems((prev) =>
+        prev.filter((item) => item._id !== cartItemId)
+      );
     } catch (error) {
-      console.error("Delete error:", error);
+      console.error("Remove error:", error);
     }
   };
 
+  // 🔹 Increase Quantity
   const handleIncrease = async (productId) => {
     try {
       await instance.post(
@@ -232,6 +248,7 @@ const Cart = () => {
     }
   };
 
+  // 🔹 Decrease Quantity
   const handleDecrease = async (cartItemId, productId, qty) => {
     if (qty <= 1) {
       handleRemove(cartItemId);
@@ -257,6 +274,7 @@ const Cart = () => {
     }
   };
 
+  // 🔹 UI States
   if (!isLoggedIn) return <p>Please login to see your cart.</p>;
   if (loading) return <p>Loading cart...</p>;
   if (!cartItems.length) return <p>Your cart is empty.</p>;
@@ -284,7 +302,11 @@ const Cart = () => {
             <div className="quantity-controls">
               <button
                 onClick={() =>
-                  handleDecrease(item._id, item.productId._id, item.quantity)
+                  handleDecrease(
+                    item._id,
+                    item.productId._id,
+                    item.quantity
+                  )
                 }
               >
                 -
@@ -292,7 +314,9 @@ const Cart = () => {
 
               <span>{item.quantity}</span>
 
-              <button onClick={() => handleIncrease(item.productId._id)}>
+              <button
+                onClick={() => handleIncrease(item.productId._id)}
+              >
                 +
               </button>
             </div>
@@ -307,6 +331,7 @@ const Cart = () => {
         </div>
       ))}
 
+      {/* 🔹 TOTAL */}
       <h2>
         Total: <PiCurrencyInrLight />
         {cartItems.reduce(

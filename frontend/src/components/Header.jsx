@@ -64,11 +64,11 @@ import { useCart } from "../contexts/CartProvider";
 
 function Header() {
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, logout } = useAuth(); // ✅ logout from context
   const { cartItems } = useCart();
 
   function handleLogout() {
-    localStorage.removeItem("admin_token");
+    logout();          // ✅ no localStorage
     navigate("/login");
   }
 
@@ -81,11 +81,13 @@ function Header() {
       </div>
 
       <div className="list">
+        {/* ✅ CART */}
         <Link to="/cart" className="cart-link">
-       <FaCartPlus className="cartIcon" />
-          {cartItems.length > 0 && (
-            <span className="cart-badge">{cartItems.length}</span>
-          )}
+          <FaCartPlus className="cartIcon" />
+          <span className="cart-text">Cart</span>
+
+          {/* ✅ Cart count */}
+          <span className="cart-badge">{cartItems.length}</span>
         </Link>
 
         <Link to="/admin/login">Admin</Link>
