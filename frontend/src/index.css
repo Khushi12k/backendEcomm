@@ -389,3 +389,34 @@ form button:hover, .addToCartBtn:hover, .single-product-details .add-to-cart:hov
   .cart-item img { width: 100%; height: auto; }
   .cart-container h2 { text-align: center; }
 }
+
+
+
+
+
+
+
+.cart-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cartIcon {
+  font-size: 20px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -12px;
+  background: #ff3b3b;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  min-width: 18px;
+  text-align: center;
+}
