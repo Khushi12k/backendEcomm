@@ -78,9 +78,9 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <CartProvider>
+  
         <First />
-      </CartProvider>
+    
     ),
     children: [
       { index: true, element: <Home /> },
@@ -111,7 +111,10 @@ const router = createBrowserRouter([
 function App() {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
+      
     </AuthProvider>
   );
 }

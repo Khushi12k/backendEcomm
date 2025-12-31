@@ -65,7 +65,7 @@ import { useCart } from "../contexts/CartProvider";
 function Header() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-  const { cartCount } = useCart();
+  const { cartItems } = useCart();
 
   function handleLogout() {
     localStorage.removeItem("admin_token");
@@ -82,9 +82,9 @@ function Header() {
 
       <div className="list">
         <Link to="/cart" className="cart-link">
-          Cart <FaCartPlus className="cartIcon" />
-          {cartCount > 0 && (
-            <span className="cart-badge">{cartCount}</span>
+       <FaCartPlus className="cartIcon" />
+          {cartItems.length > 0 && (
+            <span className="cart-badge">{cartItems.length}</span>
           )}
         </Link>
 
