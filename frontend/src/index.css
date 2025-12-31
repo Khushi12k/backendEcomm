@@ -1,3 +1,5 @@
+
+
 /* ===== General Reset ===== */
 * {
   margin: 0;
@@ -39,17 +41,50 @@ html, body {
   color: white;
 }
 
-.header .list a, .header .list span {
+.header .list {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.header .list a,
+.header .list span {
   font-weight: bold;
-  margin-left: 20px;
   cursor: pointer;
   text-decoration: none;
   color: white;
   position: relative;
 }
 
-.header .list a:hover, .header .list span:hover {
+.header .list a:hover,
+.header .list span:hover {
   color: #ffd700;
+}
+
+/* ===== CART (HEADER FIXED) ===== */
+.cart-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cartIcon {
+  font-size: 22px;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: #ff3b3b;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  min-width: 18px;
+  text-align: center;
 }
 
 /* ===== Footer ===== */
@@ -68,7 +103,9 @@ html, body {
 }
 
 /* ===== User Forms ===== */
-.login-box, .register-box, .form-box {
+.login-box,
+.register-box,
+.form-box {
   width: 400px;
   max-width: 90%;
   margin: 60px auto;
@@ -92,7 +129,9 @@ form .form-group {
   margin-bottom: 20px;
 }
 
-form input, form textarea, form select {
+form input,
+form textarea,
+form select {
   width: 100%;
   padding: 12px 15px;
   border: 1px solid #ccc;
@@ -100,7 +139,8 @@ form input, form textarea, form select {
 }
 
 /* ===== Admin Pages ===== */
-body.admin-login-page, body.admin-addproduct-page {
+body.admin-login-page,
+body.admin-addproduct-page {
   display: flex !important;
   justify-content: center;
   align-items: center;
@@ -134,7 +174,9 @@ body.admin-login-page, body.admin-addproduct-page {
 }
 
 /* ===== Buttons ===== */
-form button, .addToCartBtn, .single-product-details .add-to-cart {
+form button,
+.addToCartBtn,
+.single-product-details .add-to-cart {
   width: 100%;
   padding: 12px 15px;
   background: linear-gradient(90deg, #0d6efd, #0056b3);
@@ -144,10 +186,11 @@ form button, .addToCartBtn, .single-product-details .add-to-cart {
   border-radius: 10px;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
 }
 
-form button:hover, .addToCartBtn:hover, .single-product-details .add-to-cart:hover {
+form button:hover,
+.addToCartBtn:hover,
+.single-product-details .add-to-cart:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 8px 15px rgba(0,0,0,0.2);
   background: linear-gradient(90deg, #0056b3, #003f7f);
@@ -162,6 +205,12 @@ form button:hover, .addToCartBtn:hover, .single-product-details .add-to-cart:hov
   0% { transform: translateY(-20px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
+
+/* ===== Product Cards, Single Product, Cart styles, Responsive ===== */
+/* 🔹 YAHAN SE AAGE TUMHARI CSS 100% SAME HAI – KOI CHANGE NAHI 🔹 */
+
+
+
 
 /* ===== Product Cards ===== */
 .productsContainer {
