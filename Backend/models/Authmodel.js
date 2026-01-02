@@ -1,14 +1,54 @@
+// import { Schema, model } from "mongoose";
+
+// const authSchema = new Schema({
+//     name: { type: String, required: true },
+//     email: { type: String, required: true, unique: true },
+//     phone: { type: String, required: true},
+//     username: { type: String, required: true, unique: true, min: 4, max: 30 },
+//     password: { type: String, min: 4, max: 30 },
+//     image: { type: String },
+//     role: { type: String }
+// })
+
+// const Auth = model("auths", authSchema, "auths")
+// export default Auth
+
+
 import { Schema, model } from "mongoose";
 
-const authSchema = new Schema({
+const authSchema = new Schema(
+  {
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true},
-    username: { type: String, required: true, unique: true, min: 4, max: 30 },
+    phone: { type: String, required: true },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      min: 4,
+      max: 30,
+    },
     password: { type: String, min: 4, max: 30 },
     image: { type: String },
-    role: { type: String }
-})
+    role: { type: String },
 
-const Auth = model("auths", authSchema, "auths")
-export default Auth
+    /* ================= BLOCK SYSTEM ================= */
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    blockedAt: {
+      type: Date,
+      default: null,
+    },
+    blockReason: {
+      type: String,
+      default: null,
+    },
+    /* ================================================ */
+  },
+  { timestamps: true }
+);
+
+const Auth = model("auths", authSchema, "auths");
+export default Auth;

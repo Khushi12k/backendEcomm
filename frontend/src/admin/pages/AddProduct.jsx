@@ -24,7 +24,7 @@ function AddProduct() {
     }
   }
 
-  // Generate slug from product name
+
   async function createSlug(e) {
     const nameValue = e.target.value;
     if (!nameValue) return;

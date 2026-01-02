@@ -1,21 +1,6 @@
 import Product from "../models/Productmodel.js"
 import multer from "multer";
 
-
-// export async function addProduct(req, res) {
-//     try {
-//         const newRecord = req.body;
-//         newRecord.image = req.file.path.replace(/\\/g, "/");
-//         const newProduct = new Product(newRecord);
-//         await newProduct.save();
-//         return res.status(201).json(newProduct);
-//     } catch (error) {
-//         return res.status(500).json({ message: error.message });
-//     }
-// }
-
-
-
 export async function addProduct(req, res) {
   try {
     const newRecord = req.body;

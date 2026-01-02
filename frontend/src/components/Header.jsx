@@ -1,18 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { IoMdLogOut } from "react-icons/io";
 import { FaCartPlus } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthProvider";
 import { useCart } from "../contexts/CartProvider";
 
 function Header() {
-  const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth(); // ✅ logout from context
+  const { isLoggedIn, handleLogout } = useAuth();
   const { cartItems } = useCart();
-
-  function handleLogout() {
-    logout();          // ✅ no localStorage
-    navigate("/login");
-  }
 
   return (
     <div className="header">
@@ -23,12 +17,9 @@ function Header() {
       </div>
 
       <div className="list">
-        {/* ✅ CART */}
         <Link to="/cart" className="cart-link">
           <FaCartPlus className="cartIcon" />
           <span className="cart-text">Cart</span>
-
-          {/* ✅ Cart count */}
           <span className="cart-badge">{cartItems.length}</span>
         </Link>
 

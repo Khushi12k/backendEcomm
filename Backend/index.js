@@ -10,6 +10,7 @@ import adminRouter from "./routes/Admin.js";
 import checkRouter from "./routes/Check.js";
 import cookieParser from "cookie-parser";
 import cartRouter from "./routes/Cart.js";
+import couponRouter from "./routes/Coupon.js";
 const app = express();
 app.use(express.json());
 app.use(cookieParser())
@@ -30,6 +31,7 @@ app.use("/admin",adminRouter)
 
 app.use("/check", checkRouter)
 app.use("/cart", cartRouter)
+app.use("/coupon", couponRouter)
 
 app.listen(3000, () => console.log("Server started at port 3000"));
 

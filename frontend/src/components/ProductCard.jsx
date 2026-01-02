@@ -24,14 +24,14 @@ function ProductCard({ product }) {
 
       <div className="content">
         
-        {/* Product Name */}
+       
         <h3>
            <Link to={"/product/" + product.slug}>
             {trimContent(product.name, 22)}
           </Link>
         </h3>
 
-        {/* Price */}
+       
         <p>
           <PiCurrencyInrLight />
           {product.discountedPrice ? (
