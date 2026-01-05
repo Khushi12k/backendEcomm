@@ -27,8 +27,8 @@ export async function loginAdmin(req, res) {
     // ✅ LOCAL + PROD BOTH SUPPORT
     res.cookie("admin_token", token, {
       httpOnly: true,
-      secure: false,     // ❗ localhost FIX
-      sameSite: "lax",
+      secure: true,     // ❗ localhost FIX
+      sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
