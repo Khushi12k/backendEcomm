@@ -3,7 +3,7 @@ import Cart from "../models/Cart.js";
 /* ================= ADD / UPDATE CART ================= */
 export async function addToCart(req, res) {
   try {
-    const { productId, quantity } = req.body;
+    const { productId, quantity, selectedImage } = req.body;
     const userId = req.userId;
 
     const existingCartItem = await Cart.findOne({ userId, productId });
@@ -18,10 +18,16 @@ export async function addToCart(req, res) {
       }
 
       existingCartItem.quantity = String(newQuantity);
+
+      // ✅ update selected image if provided
+      if (selectedImage) {
+        existingCartItem.selectedImage = selectedImage;
+      }
+
       await existingCartItem.save();
 
       return res.status(200).json({
-        message: "Quantity updated",
+        message: "Cart updated",
         product: existingCartItem,
       });
     }
@@ -34,9 +40,11 @@ export async function addToCart(req, res) {
       userId,
       productId,
       quantity: String(quantity),
+      selectedImage: selectedImage || "",
     });
 
     await productInCart.save();
+
     res.status(201).json({
       message: "Product added to cart",
       product: productInCart,
@@ -52,6 +60,7 @@ export async function fetchCart(req, res) {
     const cartItems = await Cart.find({ userId: req.userId }).populate(
       "productId"
     );
+
     res.status(200).json(cartItems);
   } catch (error) {
     res.status(500).json({ message: error.message });

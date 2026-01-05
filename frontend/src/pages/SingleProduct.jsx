@@ -3,24 +3,38 @@ import instance from "../axiosConfig";
 import { useNavigate, useParams } from "react-router-dom";
 import { PiCurrencyInrLight } from "react-icons/pi";
 import { useAuth } from "../contexts/AuthProvider";
+import { useLoader } from "../contexts/LoaderContext";
+import { toast } from "react-toastify";
+import { useCart } from "../contexts/CartProvider";
 
 const SingleProduct = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+  const { setLoading } = useLoader();
+  const { addToCart } = useCart();
 
   const [product, setProduct] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [activeImage, setActiveImage] = useState("");
 
-  const { isLoggedIn } = useAuth();
-
-
+  // ================= FETCH SINGLE PRODUCT =================
   async function getSingleData() {
+    setLoading(true);
     try {
-      const response = await instance.get("/product/slug/" + slug);
-      setProduct(response.data);
-      setLoading(false);
-    } catch (err) {
-      console.error(err);
+      const res = await instance.get("/product/slug/" + slug);
+      const data = res.data;
+
+      setProduct(data);
+
+      // ✅ set default active image
+      if (data.images && data.images.length > 0) {
+        setActiveImage(data.images[0]);
+      } else if (data.image) {
+        setActiveImage(data.image);
+      }
+    } catch (error) {
+      toast.error("Failed to load product");
+    } finally {
       setLoading(false);
     }
   }
@@ -29,51 +43,66 @@ const SingleProduct = () => {
     getSingleData();
   }, [slug]);
 
-
+  // ================= ADD TO CART (FIXED) =================
   async function handleAddToCart(productId) {
-   console.log(isLoggedIn);
     if (!isLoggedIn) {
-      // alert("Please login first to add product to cart");
+      toast.info("Please login first");
       navigate("/login?nextPage=/product/" + slug);
       return;
     }
 
-    try {
-      const response = await instance.post(
-        "/cart/add",
-        { productId, quantity: 1 },
-        { withCredentials: true } 
-      );
+    setLoading(true);
 
-     
-      if (response.status === 200 || response.status === 201) {
-        alert("Product added successfully!");
-      }
+    // ✅ VERY IMPORTANT: send selected image
+    const selectedImage = activeImage;
 
-      console.log(response.data);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add product!");
-    }
+    const success = await addToCart(productId, 1, selectedImage);
+
+    setLoading(false);
+
+    if (!success) return;
   }
 
-  // 🔹 Loading / error states
-  if (loading) return <p>Loading...</p>;
-  if (!product) return <p>Product not found</p>;
+  if (!product) return null;
 
-  // 🔹 UI
+  // ================= NORMALIZE IMAGES =================
+  const allImages =
+    product.images?.length > 0
+      ? product.images
+      : product.image
+      ? [product.image]
+      : [];
+
   return (
     <div className="single-product">
+      {/* ================= IMAGE SECTION ================= */}
       <div className="single-product-image">
-        <img
-          src={`${import.meta.env.VITE_BASEURL}/${product.image}`}
-          alt={product.name}
-        />
+        <div className="main-image">
+          <img
+            src={`${import.meta.env.VITE_BASEURL}/${activeImage}`}
+            alt={product.name}
+          />
+        </div>
+
+        {allImages.length > 1 && (
+          <div className="image-gallery">
+            {allImages.map((img, index) => (
+              <img
+                key={index}
+                src={`${import.meta.env.VITE_BASEURL}/${img}`}
+                alt="thumb"
+                onClick={() => setActiveImage(img)}
+                className={activeImage === img ? "active" : ""}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* ================= DETAILS ================= */}
       <div className="single-product-details">
         <h1>{product.name}</h1>
-        <p className="category">{product.category}</p>
+        <p>{product.category}</p>
 
         <p className="price">
           <PiCurrencyInrLight />
@@ -87,12 +116,9 @@ const SingleProduct = () => {
           )}
         </p>
 
-        <p className="description">{product.description}</p>
+        <p>{product.description}</p>
 
-        <button
-          className="add-to-cart"
-          onClick={() => handleAddToCart(product._id)}
-        >
+        <button onClick={() => handleAddToCart(product._id)}>
           Add to Cart
         </button>
       </div>

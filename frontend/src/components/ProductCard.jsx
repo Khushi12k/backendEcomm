@@ -9,29 +9,29 @@ const trimContent = (text, maxLength = 30) => {
 };
 
 function ProductCard({ product }) {
+  // ✅ SUPPORT BOTH SINGLE & MULTIPLE IMAGES
+  const productImage =
+    product.images && product.images.length > 0
+      ? `${import.meta.env.VITE_BASEURL}/${product.images[0]}`
+      : product.image
+      ? `${import.meta.env.VITE_BASEURL}/${product.image}`
+      : "/placeholder.png";
+
   return (
     <div className="productCard">
-      
-     
       <div className="productImage">
         <Link to={"/product/" + product.slug}>
-          <img
-            src={`${import.meta.env.VITE_BASEURL}/${product.image}`}
-            alt={product.name}
-          />
+          <img src={productImage} alt={product.name} />
         </Link>
       </div>
 
       <div className="content">
-        
-       
         <h3>
-           <Link to={"/product/" + product.slug}>
+          <Link to={"/product/" + product.slug}>
             {trimContent(product.name, 22)}
           </Link>
         </h3>
 
-       
         <p>
           <PiCurrencyInrLight />
           {product.discountedPrice ? (
@@ -43,14 +43,9 @@ function ProductCard({ product }) {
             <strong>{product.originalPrice}</strong>
           )}
         </p>
-
-        
       </div>
     </div>
   );
 }
 
 export default ProductCard;
-
-
-

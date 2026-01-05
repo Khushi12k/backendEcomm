@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import instance from "../../axiosConfig.js";
+import { toast } from "react-toastify";
+import { useLoader } from "../../contexts/LoaderContext.jsx"; // ✅ import loader
 
 function AdminLogin() {
   const navigate = useNavigate();
+  const { setLoading } = useLoader(); // ✅ get loader function
 
   const [data, setData] = useState({
     email: "",
@@ -17,23 +20,20 @@ function AdminLogin() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    setLoading(true); // ✅ show loader
     try {
-      const response = await instance.post(
-        "/admin/login",
-        data,
-        { withCredentials: true }
-      );
+      const res = await instance.post("/admin/login", data, { withCredentials: true });
 
-      console.log("Login success", response.data);
-      alert("Login successfully in Admin");
+      toast.success(res.data.message);
 
-      // ✅ CORRECT ROUTE
-      navigate("/admin/home");
-
+      setTimeout(() => {
+        navigate("/admin/home", { replace: true });
+      }, 800);
     } catch (error) {
-      console.log("login error", error);
-      alert("Invalid email or password Admin");
+      const msg = error.response?.data?.message || "Something went wrong";
+      toast.error(msg);
+    } finally {
+      setLoading(false); // ✅ hide loader
     }
   }
 
@@ -42,38 +42,36 @@ function AdminLogin() {
       <h2>Admin Login</h2>
 
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="text"
-            placeholder="Enter Your Email"
-            name="email"
-            value={data.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            placeholder="Enter Your Password"
-            name="password"
-            value={data.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <input
+          name="email"
+          placeholder="Email"
+          value={data.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={data.password}
+          onChange={handleChange}
+          required
+        />
 
         <button type="submit">Login</button>
       </form>
 
-      <Link to="/register" className="register">
-        Register
-      </Link>
+      <Link to="/register">Register</Link>
     </div>
   );
 }
 
 export default AdminLogin;
+
+
+
+
+
+
+
+

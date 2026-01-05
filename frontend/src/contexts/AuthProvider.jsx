@@ -12,29 +12,35 @@ function AuthProvider({ children }) {
   }, []);
 
   async function checkIsLoggedIn() {
-    const response = await instance.get("/check/login?referer=user", {
-      withCredentials: true,
-    });
-    if (response.status === 200) setIsLoggedIn(true);
+    try {
+      const response = await instance.get("/check/login?referer=user", {
+        withCredentials: true,
+      });
+      if (response.status === 200) setIsLoggedIn(true);
+    } catch (err) {
+      setIsLoggedIn(false);
+    }
   }
 
   async function handleLogout() {
-    const response = await instance.post(
-      "/user/logout",
-      {},
-      {
-        withCredentials: true
-        ,
+    try {
+      const response = await instance.post(
+        "/user/logout",
+        {},
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        setIsLoggedIn(false);
+        window.location.href = "/";
       }
-    );
-    if (response.status === 200) {
-      window.location.href = "/";
+    } catch (err) {
+      console.error(err);
     }
   }
 
   return (
     <authContext.Provider
-      value={{ isLoggedIn, loggedinUser, checkIsLoggedIn, handleLogout }}
+      value={{ isLoggedIn, loggedinUser, checkIsLoggedIn, handleLogout, setIsLoggedIn }}
     >
       {children}
     </authContext.Provider>

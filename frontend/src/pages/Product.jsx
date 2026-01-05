@@ -1,39 +1,35 @@
 import { useEffect, useState } from "react";
 import instance from "../axiosConfig";
 import ProductCard from "../components/ProductCard";
+import { useLoader } from "../contexts/LoaderContext"; // ✅ import
 
 function Products() {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { setLoading } = useLoader(); // ✅ use loader
 
   useEffect(() => {
     getProducts();
   }, []);
 
   async function getProducts() {
-    setLoading(true);
+    setLoading(true); // show loader
     try {
       const response = await instance.get("/product");
-      
-      // Check if response.data.products exists, else fallback to empty array
       const productsArray = Array.isArray(response.data)
         ? response.data
         : response.data.products || [];
-      
       setProducts(productsArray);
     } catch (err) {
       console.error("Error fetching products:", err);
-      setProducts([]); // safe fallback
+      setProducts([]);
     } finally {
-      setLoading(false);
+      setLoading(false); // hide loader
     }
   }
 
-  if (loading) return <p>Loading products...</p>;
-
   return (
     <div className="productsContainer">
-      {Array.isArray(products) && products.length > 0 ? (
+      {products.length > 0 ? (
         products.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))

@@ -11,9 +11,7 @@ function Header() {
   return (
     <div className="header">
       <div className="logo">
-        <h1>
-          <Link to="/">E-commerce</Link>
-        </h1>
+        <h1><Link to="/">E-commerce</Link></h1>
       </div>
 
       <div className="list">
@@ -41,3 +39,4 @@ function Header() {
 }
 
 export default Header;
+

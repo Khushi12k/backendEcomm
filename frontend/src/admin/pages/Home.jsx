@@ -26,6 +26,15 @@ function AdminHome() {
           <h2>🎟️ Add Coupon</h2>
           <p>Create & manage discount coupons</p>
         </div>
+
+        {/* User List */}
+        <div
+          className="admin-card"
+          onClick={() => navigate("/admin/users")}
+        >
+          <h2>👥 User List</h2>
+          <p>View all registered users</p>
+        </div>
       </div>
     </div>
   );

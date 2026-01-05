@@ -1,0 +1,20 @@
+// src/contexts/LoaderContext.jsx
+import React, { createContext, useState, useContext } from "react";
+import Loader from "../pages/Loader.jsx";
+
+const LoaderContext = createContext();
+
+export function LoaderProvider({ children }) {
+  const [loading, setLoading] = useState(false);
+
+  return (
+    <LoaderContext.Provider value={{ loading, setLoading }}>
+      {children}
+      {loading && <Loader />}
+    </LoaderContext.Provider>
+  );
+}
+
+export function useLoader() {
+  return useContext(LoaderContext);
+}

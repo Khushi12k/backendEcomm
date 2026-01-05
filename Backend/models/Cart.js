@@ -12,7 +12,16 @@ const cartSchema = new Schema(
       ref: "Product",
       required: true,
     },
-    quantity: { type: String, require: true },
+    quantity: {
+      type: String,
+      required: true,
+    },
+
+    // ✅ ADD THIS (VERY IMPORTANT)
+    selectedImage: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

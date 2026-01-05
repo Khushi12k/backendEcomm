@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import instance from "../../axiosConfig";
+import { toast } from "react-toastify";
 
 const AddCoupon = () => {
   const [form, setForm] = useState({
@@ -9,20 +10,48 @@ const AddCoupon = () => {
     expiryDate: "",
   });
 
-  const [message, setMessage] = useState("");
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    /* ===== CAPITAL LETTER VALIDATION ===== */
+    if (form.code !== form.code.toUpperCase()) {
+      toast.error("❌ Coupon code must be in CAPITAL letters");
+      return;
+    }
+
+    /* ===== DATE VALIDATIONS ===== */
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const startDate = new Date(form.startDate);
+    const expiryDate = new Date(form.expiryDate);
+
+    if (startDate < today) {
+      toast.error("❌ Start date cannot be before today");
+      return;
+    }
+
+    if (expiryDate < startDate) {
+      toast.error("❌ Expiry date must be after start date");
+      return;
+    }
+
     try {
       await instance.post("/coupon/add", form);
-      setMessage("Coupon added successfully");
-      setForm({ code: "", discount: "", startDate: "", expiryDate: "" });
+      toast.success("✅ Coupon added successfully");
+
+      setForm({
+        code: "",
+        discount: "",
+        startDate: "",
+        expiryDate: "",
+      });
     } catch (error) {
-      setMessage(error.response?.data?.message || "Failed to add coupon");
+      toast.error(error.response?.data?.message || "❌ Failed to add coupon");
     }
   };
 
@@ -34,7 +63,7 @@ const AddCoupon = () => {
         <input
           type="text"
           name="code"
-          placeholder="Coupon Code"
+          placeholder="Coupon Code (CAPITAL)"
           value={form.code}
           onChange={handleChange}
           required
@@ -67,8 +96,6 @@ const AddCoupon = () => {
 
         <button type="submit">Add Coupon</button>
       </form>
-
-      {message && <p>{message}</p>}
     </div>
   );
 };
