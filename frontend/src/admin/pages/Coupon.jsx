@@ -10,33 +10,24 @@ const AddCoupon = () => {
     expiryDate: "",
   });
 
+  // ✅ today's date (for blocking past dates)
+  const today = new Date().toISOString().split("T")[0];
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "code") {
+      setForm({ ...form, code: value.toUpperCase() });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    /* ===== CAPITAL LETTER VALIDATION ===== */
-    if (form.code !== form.code.toUpperCase()) {
-      toast.error("❌ Coupon code must be in CAPITAL letters");
-      return;
-    }
-
-    /* ===== DATE VALIDATIONS ===== */
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const startDate = new Date(form.startDate);
-    const expiryDate = new Date(form.expiryDate);
-
-    if (startDate < today) {
-      toast.error("❌ Start date cannot be before today");
-      return;
-    }
-
-    if (expiryDate < startDate) {
-      toast.error("❌ Expiry date must be after start date");
+    if (form.discount <= 0 || form.discount > 100) {
+      toast.error("❌ Discount must be between 1 and 100");
       return;
     }
 
@@ -51,7 +42,7 @@ const AddCoupon = () => {
         expiryDate: "",
       });
     } catch (error) {
-      toast.error(error.response?.data?.message || "❌ Failed to add coupon");
+      toast.error(error?.response?.data?.message || "❌ Failed to add coupon");
     }
   };
 
@@ -59,7 +50,7 @@ const AddCoupon = () => {
     <div className="admin-page">
       <h2>Add Coupon</h2>
 
-      <form onSubmit={handleSubmit} className="admin-form">
+      <form className="admin-form" onSubmit={handleSubmit}>
         <input
           type="text"
           name="code"
@@ -78,19 +69,23 @@ const AddCoupon = () => {
           required
         />
 
+        {/* ✅ Start Date - past blocked */}
         <input
           type="date"
           name="startDate"
           value={form.startDate}
           onChange={handleChange}
+          min={today}
           required
         />
 
+        {/* ✅ Expiry Date - startDate se pehle block */}
         <input
           type="date"
           name="expiryDate"
           value={form.expiryDate}
           onChange={handleChange}
+          min={form.startDate || today}
           required
         />
 

@@ -1,139 +1,202 @@
 import Auth from "../models/Authmodel.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import "dotenv/config";
+import { sendEmail } from "../utils/sendgrid.js";
 
-// ================== GET USERS ==================
+/* ================== GET USERS ================== */
 export async function getUsers(req, res) {
   try {
-    const auth = await Auth.find();
-    return res.status(200).json(auth);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const users = await Auth.find().select(
+      "-password -emailOtp -otpExpiry"
+    );
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 
-// ================== REGISTER ==================
+/* ================== REGISTER ================== */
 export async function registerUser(req, res) {
   try {
     const data = req.body;
 
     const existEmail = await Auth.findOne({ email: data.email });
-    if (existEmail) return res.status(400).json({ message: "Email already exists" });
+    if (existEmail)
+      return res.status(400).json({ message: "Email already exists" });
 
     const existUser = await Auth.findOne({ username: data.username });
-    if (existUser) return res.status(400).json({ message: "Username already exists" });
+    if (existUser)
+      return res.status(400).json({ message: "Username already exists" });
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    data.password = hashedPassword;
 
-    const newUser = new Auth(data);
-    await newUser.save();
-    return res.status(201).json({ message: "User registered successfully", user: newUser });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const user = new Auth({
+      ...data,
+      password: hashedPassword,
+    });
+
+    await user.save();
+
+    res.status(201).json({ message: "Registered successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 
-// ================== LOGIN ==================
+/* ================== LOGIN ================== */
 export async function loginUsers(req, res) {
   try {
-    const data = req.body;
+    const { email, password } = req.body;
 
-    const user = await Auth.findOne({ email: data.email });
-    if (!user) return res.status(400).json({ message: "Email not found" });
+    const user = await Auth.findOne({ email });
+    if (!user)
+      return res.status(400).json({ message: "Email not found" });
 
-    const match = await bcrypt.compare(data.password, user.password);
-    if (!match) return res.status(400).json({ message: "Incorrect password" });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match)
+      return res.status(400).json({ message: "Incorrect password" });
 
-    // Generate JWT token
-    const auth_token = jwt.sign(
+    /* ✅ IF USER ALREADY OTP VERIFIED → DIRECT LOGIN */
+    if (user.isOtpVerified) {
+      const token = jwt.sign(
+        { id: user._id, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "7d" }
+      );
+
+      res.cookie("auth_token", token, {
+        httpOnly: true,
+        sameSite: "Lax",
+        secure: false, // true in https
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      return res.json({
+        message: "Login successful",
+        otpRequired: false,
+      });
+    }
+
+    /* ❌ FIRST TIME LOGIN → SEND OTP */
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.emailOtp = otp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    await sendEmail({
+      to: email,
+      subject: "Login OTP",
+      html: `<h2>${otp}</h2><p>Valid for 5 minutes</p>`,
+    });
+
+    res.json({
+      message: "OTP sent to email",
+      otpRequired: true,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+/* ================== VERIFY LOGIN OTP ================== */
+export async function verifyLoginOtp(req, res) {
+  try {
+    const { email, otp } = req.body;
+
+    const user = await Auth.findOne({ email });
+    if (!user)
+      return res.status(404).json({ message: "User not found" });
+
+    if (!user.emailOtp || user.emailOtp !== otp)
+      return res.status(400).json({ message: "Invalid OTP" });
+
+    if (user.otpExpiry < Date.now())
+      return res.status(400).json({ message: "OTP expired" });
+
+    user.emailOtp = null;
+    user.otpExpiry = null;
+    user.isOtpVerified = true; // ✅ VERY IMPORTANT
+    await user.save();
+
+    const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
-    // Set cookie
-    res.cookie("auth_token", auth_token, {
+    res.cookie("auth_token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Only true in production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // None for cross-site in production, Lax for dev
-      maxAge: 3600 * 1000, // 1 hour
+      sameSite: "Lax",
+      secure: false,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return res.status(200).json({ message: "Login success", user });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.json({ message: "Login successful" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 
-// ================== LOGOUT ==================
-export async function logoutUsers(req, res) {
+/* ================== RESEND LOGIN OTP ================== */
+export async function resendLoginOtp(req, res) {
   try {
-    // Clear cookie on logout
-    res.clearCookie("auth_token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    const { email } = req.body;
+
+    const user = await Auth.findOne({ email });
+    if (!user)
+      return res.status(404).json({ message: "User not found" });
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    user.emailOtp = otp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    await sendEmail({
+      to: email,
+      subject: "Resend Login OTP",
+      html: `<h2>${otp}</h2><p>Valid for 5 minutes</p>`,
     });
 
-    return res.status(200).json({ message: "Logout success" });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.json({ message: "OTP resent" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 
-// ================== DELETE USER ==================
+/* ================== LOGOUT ================== */
+export async function logoutUsers(req, res) {
+  res.clearCookie("auth_token", {
+    httpOnly: true,
+    sameSite: "Lax",
+    secure: false,
+  });
+
+  res.json({ message: "Logout successful" });
+}
+
+/* ================== DELETE USER ================== */
 export async function deleteUsers(req, res) {
   try {
-    const { id } = req.params;
-    if (!id) return res.status(400).json({ message: "Id Parameter is required" });
-
-    const userDeleted = await Auth.findByIdAndDelete(id);
-    if (!userDeleted) return res.status(404).json({ message: "User not found" });
-
-    return res.status(200).json({ message: "User deleted" });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+    await Auth.findByIdAndDelete(req.params.id);
+    res.json({ message: "User deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 
-// ================== UPDATE USER ==================
+/* ================== UPDATE USER ================== */
 export async function updateUsers(req, res) {
   try {
-    const { id } = req.params;
-    const updates = req.body;
+    const user = await Auth.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    ).select("-password");
 
-    if (!id) return res.status(400).json({ message: "Id Parameter is required" });
-
-    const userUpdate = await Auth.findByIdAndUpdate(id, updates, { new: true });
-    if (!userUpdate) return res.status(404).json({ message: "User not found" });
-
-    return res.status(200).json({ message: "User updated successfully", user: userUpdate });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
+    res.json({ message: "User updated", user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

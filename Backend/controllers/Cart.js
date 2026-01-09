@@ -3,67 +3,55 @@ import Cart from "../models/Cart.js";
 /* ================= ADD / UPDATE CART ================= */
 export async function addToCart(req, res) {
   try {
-    const { productId, quantity, selectedImage } = req.body;
+    const { productId, quantity } = req.body;
     const userId = req.userId;
 
-    const existingCartItem = await Cart.findOne({ userId, productId });
+    let cartItem = await Cart.findOne({ userId, productId });
 
-    if (existingCartItem) {
-      const newQuantity =
-        Number(existingCartItem.quantity) + Number(quantity);
+    if (cartItem) {
+      // ✅ FIX: convert BOTH to Number
+      const newQty =
+        Number(cartItem.quantity) + Number(quantity);
 
-      if (newQuantity <= 0) {
-        await Cart.deleteOne({ _id: existingCartItem._id });
-        return res.status(200).json({ message: "Product removed from cart" });
+      if (newQty <= 0) {
+        await Cart.findByIdAndDelete(cartItem._id);
+        return res.json({ message: "Removed from cart" });
       }
 
-      existingCartItem.quantity = String(newQuantity);
+      cartItem.quantity = newQty;
+      await cartItem.save();
 
-      // ✅ update selected image if provided
-      if (selectedImage) {
-        existingCartItem.selectedImage = selectedImage;
-      }
-
-      await existingCartItem.save();
-
-      return res.status(200).json({
-        message: "Cart updated",
-        product: existingCartItem,
-      });
+      return res.json({ message: "Cart updated", product: cartItem });
     }
 
-    if (quantity <= 0) {
+    // new product add
+    if (Number(quantity) <= 0) {
       return res.status(400).json({ message: "Invalid quantity" });
     }
 
-    const productInCart = new Cart({
+    const newCart = new Cart({
       userId,
       productId,
-      quantity: String(quantity),
-      selectedImage: selectedImage || "",
+      quantity: Number(quantity), // ✅ ensure number
     });
 
-    await productInCart.save();
+    await newCart.save();
 
-    res.status(201).json({
-      message: "Product added to cart",
-      product: productInCart,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(201).json({ message: "Added to cart", product: newCart });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 
 /* ================= FETCH CART ================= */
 export async function fetchCart(req, res) {
   try {
-    const cartItems = await Cart.find({ userId: req.userId }).populate(
-      "productId"
-    );
+    const cartItems = await Cart.find({ userId: req.userId })
+      .populate("productId");
 
-    res.status(200).json(cartItems);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.json(cartItems);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 }
 

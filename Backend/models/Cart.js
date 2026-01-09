@@ -12,12 +12,15 @@ const cartSchema = new Schema(
       ref: "Product",
       required: true,
     },
+
+    // ✅ FIX: quantity MUST be Number
     quantity: {
-      type: String,
+      type: Number,
       required: true,
+      default: 1,
     },
 
-    // ✅ ADD THIS (VERY IMPORTANT)
+    // selected image (for product variants)
     selectedImage: {
       type: String,
       default: "",

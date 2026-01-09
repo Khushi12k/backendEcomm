@@ -8,15 +8,13 @@ export async function loginAdmin(req, res) {
     const { email, password } = req.body;
 
     const user = await Auth.findOne({ email });
-    if (!user)
-      return res.status(404).json({ message: "Email not found" });
+    if (!user) return res.status(404).json({ message: "Email not found" });
 
     if (user.role !== "admin")
       return res.status(403).json({ message: "Not an admin" });
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match)
-      return res.status(401).json({ message: "Invalid credentials" });
+    if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
     const token = jwt.sign(
       { id: user._id, role: user.role },
@@ -24,17 +22,32 @@ export async function loginAdmin(req, res) {
       { expiresIn: "1d" }
     );
 
-    // ✅ LOCAL + PROD BOTH SUPPORT
+    // ✅ Fix for localhost
     res.cookie("admin_token", token, {
       httpOnly: true,
-      secure: true,     // ❗ localhost FIX
-      sameSite: "none",
+      secure: false, // must be false on localhost
+      sameSite: "lax", 
       maxAge: 24 * 60 * 60 * 1000,
     });
 
     res.status(200).json({ message: "Admin login successful" });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+}
+
+/* ================= CHECK ADMIN LOGIN ================= */
+export async function checkAdminLogin(req, res) {
+  try {
+    const token = req.cookies.admin_token;
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== "admin") return res.status(401).json({ message: "Unauthorized" });
+
+    res.status(200).json({ message: "Admin verified" });
+  } catch (error) {
+    res.status(401).json({ message: "Unauthorized" });
   }
 }
 
@@ -54,9 +67,6 @@ export async function getAllUsers(req, res) {
   }
 }
 
-
-
-
 // Block/Unblock User
 export async function blockUser(req, res) {
   try {
@@ -64,7 +74,7 @@ export async function blockUser(req, res) {
     const user = await Auth.findById(id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    user.isBlocked = !user.isBlocked; // toggle block status
+    user.isBlocked = !user.isBlocked;
     await user.save();
 
     res.status(200).json({ message: user.isBlocked ? "User blocked" : "User unblocked" });
@@ -83,9 +93,3 @@ export async function deleteUser(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
-
-
-
-
-
-

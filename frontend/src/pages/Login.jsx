@@ -1,16 +1,10 @@
+import { useState } from "react";
 import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAuth } from "../contexts/AuthProvider";
-import { GoogleLogin } from "@react-oauth/google";
-import instance from "../axiosConfig";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 
 function Login() {
-  const { checkIsLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [data, setData] = useState({
     email: "",
@@ -18,82 +12,59 @@ function Login() {
   });
 
   function handleChange(e) {
-    const { name, value } = e.target;
-    setData({ ...data, [name]: value });
+    setData({ ...data, [e.target.name]: e.target.value });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     try {
-      await axios.post(
+      const res = await axios.post(
         `${import.meta.env.VITE_BASEURL}/user/login`,
         data,
-        { withCredentials: true }
+        { withCredentials: true } // ✅ cookie allow
       );
 
-      checkIsLoggedIn();
-      toast.success("Login successful");
-
-      // ✅ go back to product page
-      navigate(location.state?.from || "/");
-    } catch (error) {
-      toast.error("Invalid email or password");
+      // ✅ BACKEND DECIDES OTP OR NOT
+      if (res.data.otpRequired) {
+        toast.success("OTP sent to your email");
+        navigate("/login-code", {
+          state: { email: data.email },
+        });
+      } else {
+        toast.success("Login successful");
+        navigate("/");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Login failed");
     }
-  }
-
-  async function handleGoogleSuccess(credentialResponse) {
-    try {
-      await instance.post("/user/google-login", {
-        token: credentialResponse.credential,
-      });
-
-      toast.success("Google login successful");
-      setIsLoggedIn(true);
-      navigate("/");
-    } catch (error) {
-      console.error(error);
-      toast.error("Google login failed");
-    }
-  }
-
-  function handleGoogleError() {
-    toast.error("Google Login Failed");
   }
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
 
       <form onSubmit={handleSubmit}>
         <input
+          type="email"
           name="email"
+          placeholder="Email"
           value={data.email}
           onChange={handleChange}
-          placeholder="Email"
           required
         />
 
         <input
           type="password"
           name="password"
+          placeholder="Password"
           value={data.password}
           onChange={handleChange}
-          placeholder="Password"
           required
         />
 
         <button type="submit">Login</button>
-
-        <div className="google-login-container">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-          />
-        </div>
       </form>
-
-      <Link to="/register">Register</Link>
 
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
@@ -101,14 +72,3 @@ function Login() {
 }
 
 export default Login;
-
-
-
-
-
-
-
-
-
-
-

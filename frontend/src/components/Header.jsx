@@ -5,13 +5,18 @@ import { useAuth } from "../contexts/AuthProvider";
 import { useCart } from "../contexts/CartProvider";
 
 function Header() {
-  const { isLoggedIn, handleLogout } = useAuth();
+  const { isLoggedIn, loggedinUser, handleLogout } = useAuth();
   const { cartItems } = useCart();
+
+  // ✅ If admin is logged in, hide the header completely
+  if (loggedinUser?.role === "admin") return null;
 
   return (
     <div className="header">
       <div className="logo">
-        <h1><Link to="/">E-commerce</Link></h1>
+        <h1>
+          <Link to="/">E-commerce</Link>
+        </h1>
       </div>
 
       <div className="list">
@@ -21,7 +26,7 @@ function Header() {
           <span className="cart-badge">{cartItems.length}</span>
         </Link>
 
-        <Link to="/admin/login">Admin</Link>
+        
 
         {isLoggedIn ? (
           <span className="logoutIcon" onClick={handleLogout}>
@@ -39,4 +44,9 @@ function Header() {
 }
 
 export default Header;
+
+
+
+
+
 

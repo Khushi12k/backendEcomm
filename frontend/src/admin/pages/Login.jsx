@@ -1,77 +1,79 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import instance from "../../axiosConfig.js";
 import { toast } from "react-toastify";
-import { useLoader } from "../../contexts/LoaderContext.jsx"; // ✅ import loader
+import { useLoader } from "../../contexts/LoaderContext.jsx";
+import { FaBars } from "react-icons/fa";
 
-function AdminLogin() {
+export default function AdminLogin() {
   const navigate = useNavigate();
-  const { setLoading } = useLoader(); // ✅ get loader function
+  const { setLoading } = useLoader();
 
   const [data, setData] = useState({
     email: "",
     password: "",
   });
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setData({ ...data, [name]: value });
-  }
+  const handleChange = (e) =>
+    setData({ ...data, [e.target.name]: e.target.value });
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // ✅ show loader
+    setLoading(true);
+
     try {
-      const res = await instance.post("/admin/login", data, { withCredentials: true });
-
+      const res = await instance.post("/admin/login", data, {
+        withCredentials: true,
+      });
       toast.success(res.data.message);
-
-      setTimeout(() => {
-        navigate("/admin/home", { replace: true });
-      }, 800);
-    } catch (error) {
-      const msg = error.response?.data?.message || "Something went wrong";
-      toast.error(msg);
+      navigate("/admin/home", { replace: true });
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
     } finally {
-      setLoading(false); // ✅ hide loader
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="admin-login-box">
-      <h2>Admin Login</h2>
+    <>
+      {/* ===== HEADER ===== */}
+      <header className="admin-login-header">
+        <h2
+          className="brand-name"
+          onClick={() => navigate("/")}
+        >
+          MyEcommerce
+        </h2>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          name="email"
-          placeholder="Email"
-          value={data.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          value={data.password}
-          onChange={handleChange}
-          required
-        />
+        <FaBars className="menu-icon" />
+      </header>
 
-        <button type="submit">Login</button>
-      </form>
+      {/* ===== LOGIN FORM ===== */}
+      <div className="admin-login-box">
+        <h2>Admin Login</h2>
 
-      <Link to="/register">Register</Link>
-    </div>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={data.email}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={data.password}
+            onChange={handleChange}
+            required
+          />
+
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </>
   );
 }
-
-export default AdminLogin;
-
-
-
-
-
-
-
-

@@ -1,38 +1,46 @@
 import { PiCurrencyInrLight } from "react-icons/pi";
 import { Link } from "react-router-dom";
 
-const trimContent = (text, maxLength = 30) => {
+const API_BASE = import.meta.env.VITE_BASEURL;
+const IMAGE_BASE = API_BASE.replace("/api", "");
+
+/* ===== IMAGE NORMALIZER ===== */
+function resolveImage(img) {
+  if (!img) return "/placeholder.png";
+  if (img.startsWith("http")) return img;
+  return `${IMAGE_BASE}/${img.replace(/\\/g, "/")}`;
+}
+
+/* ===== TEXT TRIM ===== */
+function trimText(text, limit = 30) {
   if (!text) return "";
-  return text.length > maxLength
-    ? text.substring(0, maxLength) + "..."
-    : text;
-};
+  return text.length > limit ? text.slice(0, limit) + "..." : text;
+}
 
 function ProductCard({ product }) {
-  // ✅ SUPPORT BOTH SINGLE & MULTIPLE IMAGES
   const productImage =
-    product.images && product.images.length > 0
-      ? `${import.meta.env.VITE_BASEURL}/${product.images[0]}`
+    product.images?.length > 0
+      ? resolveImage(product.images[0])
       : product.image
-      ? `${import.meta.env.VITE_BASEURL}/${product.image}`
+      ? resolveImage(product.image)
       : "/placeholder.png";
 
   return (
     <div className="productCard">
       <div className="productImage">
-        <Link to={"/product/" + product.slug}>
+        <Link to={`/product/${product.slug}`}>
           <img src={productImage} alt={product.name} />
         </Link>
       </div>
 
       <div className="content">
-        <h3>
-          <Link to={"/product/" + product.slug}>
-            {trimContent(product.name, 22)}
+        <h3 className="product-title">
+          <Link to={`/product/${product.slug}`} title={product.name}>
+            {trimText(product.name, 20)}
           </Link>
         </h3>
 
-        <p>
+        <p className="price">
           <PiCurrencyInrLight />
           {product.discountedPrice ? (
             <>

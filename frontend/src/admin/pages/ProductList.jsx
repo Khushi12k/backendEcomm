@@ -3,27 +3,32 @@ import instance from "../../axiosConfig.js";
 import { toast } from "react-toastify";
 import { useLoader } from "../../contexts/LoaderContext.jsx";
 
+/* ================= IMAGE RESOLVER ================= */
+const resolveImage = (img) => {
+  if (!img) return "/no-image.png";
+  if (img.startsWith("http")) return img;
+  return `${import.meta.env.VITE_BASEURL}/${img}`;
+};
+
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [searchName, setSearchName] = useState("");
   const [searchCategory, setSearchCategory] = useState("");
-  const [displayCount, setDisplayCount] = useState(20);
-  const [editingId, setEditingId] = useState(null);
+
+  const [editingProduct, setEditingProduct] = useState(null);
   const [editData, setEditData] = useState({});
+  const [editImage, setEditImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState("");
+
   const { setLoading } = useLoader();
 
-  // ================= GET PRODUCTS =================
+  /* ================= GET PRODUCTS ================= */
   async function getProducts() {
     setLoading(true);
     try {
       const res = await instance.get("/product", { withCredentials: true });
-      let data = res.data || [];
-
-      // sort by price
-      data.sort((a, b) => a.discountedPrice - b.discountedPrice);
-
-      setProducts(data);
-    } catch (err) {
+      setProducts(res.data || []);
+    } catch {
       toast.error("Failed to load products");
     } finally {
       setLoading(false);
@@ -34,7 +39,7 @@ function ProductList() {
     getProducts();
   }, []);
 
-  // ================= DELETE =================
+  /* ================= DELETE ================= */
   async function deleteProduct(id) {
     if (!window.confirm("Delete product?")) return;
     setLoading(true);
@@ -49,29 +54,45 @@ function ProductList() {
     }
   }
 
-  // ================= EDIT =================
+  /* ================= EDIT ================= */
   function startEdit(product) {
-    setEditingId(product._id);
+    setEditingProduct(product);
     setEditData({
       name: product.name,
       category: product.category,
       discountedPrice: product.discountedPrice,
     });
+    setPreviewImage(product.images?.[0] || product.image);
+    setEditImage(null);
   }
 
   function handleEditChange(e) {
-    const { name, value } = e.target;
-    setEditData({ ...editData, [name]: value });
+    setEditData({ ...editData, [e.target.name]: e.target.value });
   }
 
-  async function updateProduct(id) {
+  function handleImageChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setEditImage(file);
+    setPreviewImage(URL.createObjectURL(file));
+  }
+
+  async function updateProduct() {
     setLoading(true);
     try {
-      await instance.put(`/product/${id}`, editData, {
+      const formData = new FormData();
+      formData.append("name", editData.name);
+      formData.append("category", editData.category);
+      formData.append("discountedPrice", editData.discountedPrice);
+      if (editImage) formData.append("image", editImage);
+
+      await instance.put(`/product/${editingProduct._id}`, formData, {
         withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
       });
+
       toast.success("Product updated");
-      setEditingId(null);
+      setEditingProduct(null);
       getProducts();
     } catch {
       toast.error("Update failed");
@@ -80,25 +101,22 @@ function ProductList() {
     }
   }
 
-  // ================= FILTER =================
+  /* ================= FILTER ================= */
   const filtered = products.filter(
     (p) =>
       p.name.toLowerCase().includes(searchName.toLowerCase()) &&
       p.category.toLowerCase().includes(searchCategory.toLowerCase())
   );
 
-  const visibleProducts = filtered.slice(0, displayCount);
-
   return (
     <div className="admin-product-list">
       <h2>All Products</h2>
 
-      <div style={{ marginBottom: "10px" }}>
+      <div className="product-filters">
         <input
           placeholder="Search by name"
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
-          style={{ marginRight: "10px" }}
         />
         <input
           placeholder="Search by category"
@@ -107,7 +125,7 @@ function ProductList() {
         />
       </div>
 
-      <table border="1" width="100%">
+      <table>
         <thead>
           <tr>
             <th>Name</th>
@@ -119,75 +137,84 @@ function ProductList() {
         </thead>
 
         <tbody>
-          {visibleProducts.map((p) => (
+          {filtered.map((p) => (
             <tr key={p._id}>
               <td>
-                {editingId === p._id ? (
-                  <input
-                    name="name"
-                    value={editData.name}
-                    onChange={handleEditChange}
-                  />
-                ) : (
-                  p.name
-                )}
+                <span className="table-text">{p.name}</span>
               </td>
-
               <td>
-                {editingId === p._id ? (
-                  <input
-                    name="category"
-                    value={editData.category}
-                    onChange={handleEditChange}
-                  />
-                ) : (
-                  p.category
-                )}
+                <span className="table-text">{p.category}</span>
               </td>
-
-              <td>
-                {editingId === p._id ? (
-                  <input
-                    name="discountedPrice"
-                    type="number"
-                    value={editData.discountedPrice}
-                    onChange={handleEditChange}
-                  />
-                ) : (
-                  p.discountedPrice
-                )}
-              </td>
-
-              {/* ✅ IMAGE FIX (FINAL & CORRECT) */}
+              <td>₹{p.discountedPrice}</td>
               <td>
                 <img
-                  src={`${import.meta.env.VITE_BASEURL}/${
-                    p.images?.length > 0 ? p.images[0] : p.image
-                  }`}
-                  width="50"
-                  height="50"
-                  style={{ objectFit: "cover", borderRadius: "4px" }}
-                  alt={p.name || "product"}
+                  src={resolveImage(p.images?.[0] || p.image)}
+                  alt={p.name}
                 />
               </td>
-
               <td>
-                {editingId === p._id ? (
-                  <>
-                    <button onClick={() => updateProduct(p._id)}>✅</button>
-                    <button onClick={() => setEditingId(null)}>❌</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => startEdit(p)}>✏️</button>
-                    <button onClick={() => deleteProduct(p._id)}>🗑️</button>
-                  </>
-                )}
+                <button className="edit-btn" onClick={() => startEdit(p)}>
+                  ✏️ Edit
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteProduct(p._id)}
+                >
+                  🗑️ Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {editingProduct && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <h3>Edit Product</h3>
+
+            <input
+              name="name"
+              value={editData.name}
+              onChange={handleEditChange}
+              placeholder="Product Name"
+            />
+
+            <input
+              name="category"
+              value={editData.category}
+              onChange={handleEditChange}
+              placeholder="Category"
+            />
+
+            <input
+              type="number"
+              name="discountedPrice"
+              value={editData.discountedPrice}
+              onChange={handleEditChange}
+              placeholder="Price"
+            />
+
+            <div className="image-preview">
+              <img src={resolveImage(previewImage)} alt="preview" />
+            </div>
+
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+
+            <div className="modal-actions">
+              <button className="save-btn" onClick={updateProduct}>
+                Save
+              </button>
+              <button
+                className="cancel-btn"
+                onClick={() => setEditingProduct(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

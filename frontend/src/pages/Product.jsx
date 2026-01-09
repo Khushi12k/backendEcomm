@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import instance from "../axiosConfig";
 import ProductCard from "../components/ProductCard";
-import { useLoader } from "../contexts/LoaderContext"; // ✅ import
+import { useLoader } from "../contexts/LoaderContext";
 
 function Products() {
   const [products, setProducts] = useState([]);
-  const { setLoading } = useLoader(); // ✅ use loader
+  const { setLoading } = useLoader();
 
   useEffect(() => {
     getProducts();
   }, []);
 
   async function getProducts() {
-    setLoading(true); // show loader
+    setLoading(true);
     try {
       const response = await instance.get("/product");
       const productsArray = Array.isArray(response.data)
@@ -23,7 +23,7 @@ function Products() {
       console.error("Error fetching products:", err);
       setProducts([]);
     } finally {
-      setLoading(false); // hide loader
+      setLoading(false);
     }
   }
 
