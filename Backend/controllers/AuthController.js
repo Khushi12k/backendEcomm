@@ -18,24 +18,19 @@ export async function getUsers(req, res) {
 /* ================== REGISTER ================== */
 export async function registerUser(req, res) {
   try {
-    const data = req.body;
+    const { name, email, password } = req.body;
 
-    const existEmail = await Auth.findOne({ email: data.email });
-    if (existEmail)
+    if (await Auth.findOne({ email }))
       return res.status(400).json({ message: "Email already exists" });
 
-    const existUser = await Auth.findOne({ username: data.username });
-    if (existUser)
-      return res.status(400).json({ message: "Username already exists" });
+    const hash = await bcrypt.hash(password, 10);
 
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-
-    const user = new Auth({
-      ...data,
-      password: hashedPassword,
+    await Auth.create({
+      name,
+      email,
+      password: hash,
+      authProvider: "local",
     });
-
-    await user.save();
 
     res.status(201).json({ message: "Registered successfully" });
   } catch (err) {
@@ -49,14 +44,16 @@ export async function loginUsers(req, res) {
     const { email, password } = req.body;
 
     const user = await Auth.findOne({ email });
-    if (!user)
-      return res.status(400).json({ message: "Email not found" });
+    if (!user) return res.status(400).json({ message: "User not found" });
+
+    if (!user.password)
+      return res.status(400).json({ message: "Use Google login" });
 
     const match = await bcrypt.compare(password, user.password);
     if (!match)
       return res.status(400).json({ message: "Incorrect password" });
 
-    /* ✅ IF USER ALREADY OTP VERIFIED → DIRECT LOGIN */
+    /* ✅ ALREADY VERIFIED → DIRECT LOGIN */
     if (user.isOtpVerified) {
       const token = jwt.sign(
         { id: user._id, role: user.role },
@@ -67,17 +64,14 @@ export async function loginUsers(req, res) {
       res.cookie("auth_token", token, {
         httpOnly: true,
         sameSite: "Lax",
-        secure: false, // true in https
+        secure: false,
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      return res.json({
-        message: "Login successful",
-        otpRequired: false,
-      });
+      return res.json({ otpRequired: false });
     }
 
-    /* ❌ FIRST TIME LOGIN → SEND OTP */
+    /* ❌ FIRST LOGIN → SEND OTP */
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.emailOtp = otp;
@@ -90,10 +84,7 @@ export async function loginUsers(req, res) {
       html: `<h2>${otp}</h2><p>Valid for 5 minutes</p>`,
     });
 
-    res.json({
-      message: "OTP sent to email",
-      otpRequired: true,
-    });
+    res.json({ otpRequired: true });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -105,10 +96,9 @@ export async function verifyLoginOtp(req, res) {
     const { email, otp } = req.body;
 
     const user = await Auth.findOne({ email });
-    if (!user)
-      return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user.emailOtp || user.emailOtp !== otp)
+    if (user.emailOtp !== otp)
       return res.status(400).json({ message: "Invalid OTP" });
 
     if (user.otpExpiry < Date.now())
@@ -116,7 +106,7 @@ export async function verifyLoginOtp(req, res) {
 
     user.emailOtp = null;
     user.otpExpiry = null;
-    user.isOtpVerified = true; // ✅ VERY IMPORTANT
+    user.isOtpVerified = true;
     await user.save();
 
     const token = jwt.sign(

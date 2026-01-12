@@ -26,3 +26,8 @@ productRouter.get("/checkSlug/:slug", checkSlug);
 productRouter.get("/slug/:slug", getProductBySlug);
 
 export default productRouter;
+
+
+
+
+

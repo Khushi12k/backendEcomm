@@ -10,6 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@react-oauth/google": "^0.13.4",
     "@sendgrid/mail": "^8.1.6",
     "axios": "^1.13.2",
@@ -20,6 +21,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "google-auth-library": "^10.5.0",
+    "groq-sdk": "^0.37.0",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.0.0",
     "mongoose": "^9.0.1",

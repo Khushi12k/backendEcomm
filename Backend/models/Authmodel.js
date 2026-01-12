@@ -29,11 +29,15 @@ const authSchema = new Schema(
 
     /* ===== EMAIL VERIFICATION ===== */
     isVerified: { type: Boolean, default: false },
+
+    /* ===== LOGIN OTP (FIX) ===== */
     emailOtp: { type: String },
     otpExpiry: { type: Date },
+    isOtpVerified: { type: Boolean, default: false }, // ✅ FIX ADDED
   },
   { timestamps: true }
 );
 
 const Auth = model("Auth", authSchema);
 export default Auth;
+

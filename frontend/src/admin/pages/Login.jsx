@@ -35,45 +35,72 @@ export default function AdminLogin() {
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300">
       {/* ===== HEADER ===== */}
-      <header className="admin-login-header">
+      <header className="h-16 bg-gray-900 text-white flex items-center justify-between px-6 shadow-md">
         <h2
-          className="brand-name"
+          className="text-lg font-semibold cursor-pointer hover:text-blue-400 transition"
           onClick={() => navigate("/")}
         >
           MyEcommerce
         </h2>
 
-        <FaBars className="menu-icon" />
+        <FaBars className="text-xl cursor-pointer hover:text-gray-400 transition" />
       </header>
 
       {/* ===== LOGIN FORM ===== */}
-      <div className="admin-login-box">
-        <h2>Admin Login</h2>
+      <div className="flex items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8">
+          <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+            Admin Login
+          </h2>
 
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={data.email}
-            onChange={handleChange}
-            required
-          />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* EMAIL */}
+            <input
+              type="email"
+              name="email"
+              placeholder="Admin Email"
+              value={data.email}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl
+                         focus:outline-none focus:ring-2 focus:ring-blue-500
+                         transition"
+            />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={data.password}
-            onChange={handleChange}
-            required
-          />
+            {/* PASSWORD */}
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={data.password}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl
+                         focus:outline-none focus:ring-2 focus:ring-blue-500
+                         transition"
+            />
 
-          <button type="submit">Login</button>
-        </form>
+            {/* BUTTON */}
+            <button
+              type="submit"
+              className="w-full py-3 rounded-xl font-semibold text-white
+                         bg-gradient-to-r from-blue-600 to-blue-700
+                         hover:from-blue-700 hover:to-blue-800
+                         transform hover:-translate-y-1 transition-all
+                         shadow-lg"
+            >
+              Login
+            </button>
+          </form>
+
+          {/* INFO */}
+          <p className="text-center text-sm text-gray-500 mt-6">
+            Authorized access only
+          </p>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

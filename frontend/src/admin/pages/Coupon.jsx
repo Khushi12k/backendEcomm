@@ -47,50 +47,85 @@ const AddCoupon = () => {
   };
 
   return (
-    <div className="admin-page">
-      <h2>Add Coupon</h2>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
 
-      <form className="admin-form" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="code"
-          placeholder="Coupon Code (CAPITAL)"
-          value={form.code}
-          onChange={handleChange}
-          required
-        />
+        {/* TITLE */}
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Add Coupon
+        </h2>
 
-        <input
-          type="number"
-          name="discount"
-          placeholder="Discount %"
-          value={form.discount}
-          onChange={handleChange}
-          required
-        />
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* COUPON CODE */}
+          <input
+            type="text"
+            name="code"
+            placeholder="Coupon Code (CAPITAL)"
+            value={form.code}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 border rounded-xl uppercase
+                       focus:ring-2 focus:ring-blue-500 outline-none"
+          />
 
-        {/* ✅ Start Date - past blocked */}
-        <input
-          type="date"
-          name="startDate"
-          value={form.startDate}
-          onChange={handleChange}
-          min={today}
-          required
-        />
+          {/* DISCOUNT */}
+          <input
+            type="number"
+            name="discount"
+            placeholder="Discount %"
+            value={form.discount}
+            onChange={handleChange}
+            required
+            className="w-full px-4 py-3 border rounded-xl
+                       focus:ring-2 focus:ring-blue-500 outline-none"
+          />
 
-        {/* ✅ Expiry Date - startDate se pehle block */}
-        <input
-          type="date"
-          name="expiryDate"
-          value={form.expiryDate}
-          onChange={handleChange}
-          min={form.startDate || today}
-          required
-        />
+          {/* START DATE */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Start Date
+            </label>
+            <input
+              type="date"
+              name="startDate"
+              value={form.startDate}
+              onChange={handleChange}
+              min={today}
+              required
+              className="w-full px-4 py-3 border rounded-xl
+                         focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
 
-        <button type="submit">Add Coupon</button>
-      </form>
+          {/* EXPIRY DATE */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Expiry Date
+            </label>
+            <input
+              type="date"
+              name="expiryDate"
+              value={form.expiryDate}
+              onChange={handleChange}
+              min={form.startDate || today}
+              required
+              className="w-full px-4 py-3 border rounded-xl
+                         focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* SUBMIT */}
+          <button
+            type="submit"
+            className="w-full py-3 bg-gradient-to-r from-blue-600 to-blue-800
+                       text-white font-semibold rounded-xl shadow-md
+                       hover:scale-[1.03] hover:shadow-xl transition"
+          >
+            Add Coupon
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

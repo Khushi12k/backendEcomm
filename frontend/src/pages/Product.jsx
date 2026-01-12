@@ -28,13 +28,30 @@ function Products() {
   }
 
   return (
-    <div className="productsContainer">
+    <div className="min-h-screen bg-gray-100 px-5 py-8">
       {products.length > 0 ? (
-        products.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))
+        <div
+          className="
+            flex flex-wrap justify-center gap-6
+            animate-fade-in
+          "
+        >
+          {products.map((product) => (
+            <div
+              key={product._id}
+              className="
+                transform transition duration-300
+                hover:-translate-y-2 hover:scale-[1.03]
+              "
+            >
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </div>
       ) : (
-        <p>No products found.</p>
+        <p className="text-center text-gray-500 text-lg mt-10">
+          No products found.
+        </p>
       )}
     </div>
   );

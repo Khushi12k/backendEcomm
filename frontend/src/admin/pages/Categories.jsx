@@ -66,61 +66,107 @@ function Categories() {
   }
 
   return (
-    <div className="admin-home">
-      <h1>Categories</h1>
+    <div className="min-h-screen bg-gray-100 px-4 py-8">
+      <div className="max-w-5xl mx-auto space-y-10">
 
-      {/* ADD CATEGORY FORM */}
-      <form onSubmit={handleSubmit} className="admin-card">
-        <input
-          type="text"
-          placeholder="Category name"
-          value={name}
-          onChange={(e) => {
-            const value = e.target.value;
-            setName(value);
-            setSlug(generateSlug(value));
-          }}
-          required
-        />
+        {/* PAGE TITLE */}
+        <h1 className="text-3xl font-bold text-gray-800 text-center">
+          Categories
+        </h1>
 
-        <input
-          type="text"
-          placeholder="Slug"
-          value={slug}
-          readOnly
-        />
+        {/* ADD CATEGORY FORM */}
+        <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md mx-auto">
+          <h2 className="text-lg font-semibold text-gray-700 mb-4 text-center">
+            Add Category
+          </h2>
 
-        <button type="submit">Add Category</button>
-      </form>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Category name"
+              value={name}
+              onChange={(e) => {
+                const value = e.target.value;
+                setName(value);
+                setSlug(generateSlug(value));
+              }}
+              required
+              className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+            />
 
-      {/* CATEGORY LIST */}
-      <div className="admin-users" style={{ marginTop: "40px" }}>
-        <h2>All Categories</h2>
+            <input
+              type="text"
+              placeholder="Slug"
+              value={slug}
+              readOnly
+              className="w-full px-4 py-3 border rounded-xl bg-gray-100 text-gray-600"
+            />
 
-        <table className="user-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Slug</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.length === 0 ? (
-              <tr>
-                <td colSpan="3">No categories found</td>
-              </tr>
-            ) : (
-              categories.map((cat, index) => (
-                <tr key={cat._id}>
-                  <td>{index + 1}</td>
-                  <td>{cat.name}</td>
-                  <td>{cat.slug}</td>
+            <button
+              type="submit"
+              className="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl
+                         hover:bg-blue-700 hover:shadow-lg transition"
+            >
+              Add Category
+            </button>
+          </form>
+        </div>
+
+        {/* CATEGORY LIST */}
+        <div className="bg-white rounded-2xl shadow-xl p-6">
+          <h2 className="text-xl font-semibold text-gray-700 mb-4">
+            All Categories
+          </h2>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                    #
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                    Name
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">
+                    Slug
+                  </th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              </thead>
+
+              <tbody>
+                {categories.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="3"
+                      className="text-center py-8 text-gray-500"
+                    >
+                      No categories found
+                    </td>
+                  </tr>
+                ) : (
+                  categories.map((cat, index) => (
+                    <tr
+                      key={cat._id}
+                      className="border-t hover:bg-gray-50"
+                    >
+                      <td className="px-4 py-3 text-sm">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-3 text-sm font-medium">
+                        {cat.name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-600">
+                        {cat.slug}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   );
